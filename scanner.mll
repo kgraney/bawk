@@ -2,6 +2,7 @@
 
 let hex_character = ['0'-'9' 'A'-'F' 'a'-'f']
 let hex_sequence = "0x" hex_character+
+let literal = ['A'-'Z' 'a'-'z']['0'-'9' 'A'-'Z' 'a'-'z']*
 
 rule token = parse
 	| [' ' '\t' '\r' '\n'] { token lexbuf }
@@ -15,11 +16,13 @@ rule token = parse
 	| "}" { RBRACE }
 
 	(* type definitions *)
-	| "int1" { INT_1_BYTE }
-	| "int2" { INT_2_BYTES }
-	| "int4" { INT_4_BYTES }
-	| "uint2" { UINT_2_BYTES }
-	| "uint4" { UINT_4_BYTES }
+	| "int1" { BIND_TYPE(Ast_types.Int_1_byte) }
+	| "int2" { BIND_TYPE(Ast_types.Int_2_bytes) }
+	| "int4" { BIND_TYPE(Ast_types.Int_4_bytes) }
+	| "uint2" { BIND_TYPE(Ast_types.UInt_2_bytes) }
+	| "uint4" { BIND_TYPE(Ast_types.UInt_4_bytes) }
+
+	| literal as lit { LITERAL(lit) }
 
 	| hex_sequence as lit { INT_LITERAL(int_of_string lit) }
 	| eof { EOF }

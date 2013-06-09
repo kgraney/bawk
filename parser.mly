@@ -1,10 +1,10 @@
 %{ %}
 
-%token INT_1_BYTE INT_2_BYTES INT_4_BYTES
-%token UINT_1_BYTE UINT_2_BYTES UINT_4_BYTES
+%token <Ast_types.bind_type> BIND_TYPE
 
 %token COLON SEMICOLON FSLASH RBRACE LBRACE
 
+%token <string> LITERAL
 %token <int> INT_LITERAL
 %token EOF
 
@@ -13,9 +13,13 @@
 
 %%
 
+pat_token:
+	| INT_LITERAL { Ast_types.Lit($1) }
+	| LITERAL COLON BIND_TYPE { Ast_types.Binding($1, $3) }
+
 pat_expr:
 	| { [] }
-	| pat_expr expr { $2 :: $1 }
+	| pat_expr pat_token { $2 :: $1 }
 
 statement:
 	| expr SEMICOLON { Ast_types.Expr($1) }

@@ -1,8 +1,20 @@
+type bind_type =
+	| Int_1_byte
+	| Int_2_bytes
+	| Int_4_bytes
+	| UInt_2_bytes
+	| UInt_4_bytes
+
+type literal = string
 
 type expr =
-	| Lit of int
+	| LitInt of int
 
-type pat_expr = expr list
+type pat_token =
+	| Lit of int
+	| Binding of literal * bind_type
+
+type pat_expr = pat_token list
 
 type statement =
 	| Pattern of pat_expr * statement
