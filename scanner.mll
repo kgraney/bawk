@@ -9,6 +9,7 @@ rule token = parse
 
 	(* language semantics *)
 	| ":" { COLON }
+	| ";" { SEMICOLON }
 	| "/" { FSLASH }
 	| "{" { LBRACE }
 	| "}" { RBRACE }
@@ -19,7 +20,6 @@ rule token = parse
 	| "int4" { INT_4_BYTES }
 	| "uint2" { UINT_2_BYTES }
 	| "uint4" { UINT_4_BYTES }
-
 
 	| hex_sequence as lit { LITERAL(Utile.int_of_hex lit) }
 	| eof { EOF }
