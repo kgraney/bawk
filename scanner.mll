@@ -1,7 +1,7 @@
 { open Parser }
 
 let hex_character = ['0'-'9' 'A'-'F' 'a'-'f']
-let hex_sequence = hex_character+
+let hex_sequence = "0x" hex_character+
 
 rule token = parse
 	| [' ' '\t' '\r' '\n'] { token lexbuf }
@@ -21,7 +21,7 @@ rule token = parse
 	| "uint2" { UINT_2_BYTES }
 	| "uint4" { UINT_4_BYTES }
 
-	| hex_sequence as lit { LITERAL(Utile.int_of_hex lit) }
+	| hex_sequence as lit { INT_LITERAL(int_of_string lit) }
 	| eof { EOF }
 
 

@@ -5,7 +5,7 @@
 
 %token COLON SEMICOLON FSLASH RBRACE LBRACE
 
-%token <int> LITERAL
+%token <int> INT_LITERAL
 %token EOF
 
 %start program
@@ -23,7 +23,7 @@ statement:
 	| FSLASH pat_expr FSLASH statement { Ast_types.Pattern($2,$4) }
 
 expr:
-	| LITERAL { Ast_types.Lit($1) }
+	| INT_LITERAL { Ast_types.LitInt($1) }
 
 statement_list:
 	| { [] }
