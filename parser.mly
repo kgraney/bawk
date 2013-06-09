@@ -17,12 +17,10 @@ pat_expr:
 	| { [] }
 	| pat_expr expr { $2 :: $1 }
 
-pattern_expr:
-	| FSLASH pat_expr FSLASH statement { Ast_types.Pattern($2,$4) }
-
 statement:
 	| expr SEMICOLON { Ast_types.Expr($1) }
 	| LBRACE statement_list RBRACE { Ast_types.Block($2) }
+	| FSLASH pat_expr FSLASH statement { Ast_types.Pattern($2,$4) }
 
 expr:
 	| LITERAL { Ast_types.Lit($1) }
