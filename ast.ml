@@ -1,34 +1,43 @@
 open Ast_types
 open Printf
 
+let make_link n1 n2 =
+	printf "%d -> %d\n" n1 n2;;
+
+let make_nonterminal ~this:this_id ?parent:(parent_id=(-1)) label =
+	printf "%d [label=\"%s\"]\n" this_id label;
+	if parent_id != -1 then make_link parent_id this_id
+	else ();;
+
+let folded_printer func parent_id =
+	(fun id x -> let this_id = id + 1 in
+		make_link parent_id this_id;
+		func x this_id parent_id );;
+
+(* each *_print function returns the next id available for use *)
 let print_tree prog =
 	let rec stmt_print root id parent =
 		match root with
 		| Pattern(pat_expr, stmt) ->
-			let parent_id = id in
-			let stmt_id = pat_print pat_expr (parent_id + 1) parent_id in
-			let consumed_ids = stmt_print stmt (stmt_id + 1) parent_id in
-			printf "%d [label=\"pat_expr\"]\n" (parent_id + 1);
-			printf "%d -> %d;\n" parent_id (parent_id + 1);
-			printf "%d [label=\"statement\"]\n" stmt_id;
-			printf "%d -> %d;\n" parent_id stmt_id;
-			printf "%d -> %d;\n" stmt_id (stmt_id + 1);
-			printf "%d [label=\"pattern\"];\n" parent_id;
+			let pattern_id = id + 1 in
+			let stmt_id = pat_expr_print pat_expr pattern_id id in
+			let consumed_ids = stmt_print stmt (stmt_id + 1) id in
+			make_nonterminal "pattern" ~this:id;
+			make_nonterminal "statement" ~this:stmt_id ~parent:id;
+			make_link stmt_id (stmt_id + 1);
 			consumed_ids
 
 		| Block(statement_lst) ->
-			let parent_id = id in
-			let consumed_ids = List.fold_left
-				(fun id x ->
-					printf "%d -> %d\n" parent_id (id + 1);
-					stmt_print x (id + 1) parent_id
-				)
-				parent_id statement_lst in
-			printf "%d [label=\"block\"];\n" parent_id;
-			consumed_ids
+			make_nonterminal "block" ~this:id;
+			List.fold_left (folded_printer stmt_print id) id statement_lst
 
 		| _ -> printf "%d [label=\"other\"]\n" id; id;
-	and pat_print root id parent =
+
+	and pat_expr_print lst id parent =
+		make_nonterminal "pat_expr" ~this:id ~parent:parent;
+		List.fold_left (folded_printer pat_token_print id) id lst
+
+	and pat_token_print token id parent =
 		id + 1
 	in
 	print_string "digraph AST {\n";
