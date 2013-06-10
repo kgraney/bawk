@@ -1,2 +1,2 @@
 
-val print_tree: Ast_types.program -> unit
+val print_tree: Ast_types.statement -> unit

@@ -9,7 +9,7 @@
 %token EOF
 
 %start program
-%type <Ast_types.program> program
+%type <Ast_types.statement> program
 
 %%
 
@@ -34,4 +34,4 @@ statement_list:
 	| statement_list statement { $2 :: $1 }
 
 program:
-	statement_list { $1 }
+	statement_list { Ast_types.Block($1) }

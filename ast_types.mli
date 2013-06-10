@@ -1,3 +1,5 @@
+(** Types used by the AST *)
+
 type bind_type =
 	| Int_1_byte
 	| Int_2_bytes
@@ -20,5 +22,3 @@ type statement =
 	| Pattern of pat_expr * statement
 	| Block of statement list
 	| Expr of expr
-
-type program = statement list
