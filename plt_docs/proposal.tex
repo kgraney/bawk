@@ -1,0 +1,109 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage{color}
+\usepackage{fullpage}
+\usepackage{listings}
+
+\usepackage{fouriernc}
+\usepackage[T1]{fontenc}
+
+%\usepackage[scaled]{beramono}
+%\usepackage[T1]{fontenc}
+
+%\usepackage{inconsolata}
+%\usepackage[T1]{fontenc}
+
+\title{bawk, a binary awk}
+\author{
+	Kevin M.\ Graney\\
+	\texttt{kmg2165@columbia.edu}
+}
+
+\lstset{
+  basicstyle=\tt,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{cyan}, % the style that is used for the line-numbers
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+  title=\lstname,                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+  xleftmargin=30pt,
+  xrightmargin=30pt,
+  framexleftmargin=17pt,
+  framexrightmargin=5pt,
+  %framexbottommargin=4pt,
+}
+\lstset{basicstyle=\tt\footnotesize, columns=fullflexible}
+
+\begin{document}
+\maketitle
+
+\section{Overview}
+The bawk language, who's name is derived from `binary awk', is intended to be a small, special-purpose language for the parsing of regularly formatted binary files.  In the spirit of awk, bawk will match rules in binary files and extract data based on these rules.  Bawk will solve the problem of quickly decoding a regularly formatted binary file to view the contents much the way awk solves this same problem for regularly formatted text files.
+
+The language will require the user to define structures encoded in the data, and will parse the binary data as a sequence of these structures, decoding each structure into values.  Structures will be defined in C-style syntax, with named fields and a subset of C types supported.  The structure definitions will be similar to the {\tt .proto} file format used for Google Protocol Buffers\footnote{https://developers.google.com/protocol-buffers/}, but will appear more C-like and will not define the way in which the data is stored--only how it should be interpreted.  The data is assumed to be stored sequentially in the file as defined by the structures specified in the bawk file and the types used in those structures.   The \texttt{Record} structure will be the default structure present in the file, and the core content of the binary file is assumed to be sequential \texttt{Record} structures.
+
+The bawk interpreter will take two inputs for execution: (1) text in the bawk langauge, and (2) binary data to run the bawk program on.  This workflow will be similar to that of a basic awk workflow, and the language itself is inspired by awk, with the same basic program construct.  That is, a program will be a series of rules and actions, with begin and end actions possible, which execute before and after processing the binary data.
+
+\begin{quote}\sl
+	{\tt BEGIN } {\tt\{} begin actions {\tt\}}\\
+	rule {\tt\{} actions {\tt\}}\\
+	rule {\tt\{} actions {\tt\}}\\
+	\ldots\\
+	{\tt END } {\tt\{} end actions {\tt\}}
+\end{quote}
+
+The structure definitions used by the program will be defined in the mandatory \textsl{begin actions}.  The \textsl{end actions} will be optional, but useful for processing files with special data appended to the end of them, or for printing summary information from processing the file.
+
+The bawk interpreter will begin by compiling the bawk program into bytecode.  The bytecode interpreter will then begin by processing the \textsl{begin actions}, which may specify structure definitions and commands to advance the read pointer within the file.  Advancing the read pointer will \texttt{seek()} to a position in the file before beginning the rule matching phase.
+
+In the rule matching phase, the position of the read pointer is interpreted according to the rules to determine if the actions associated with a given rule should be executed.  If no rules match, the read pointer is advanced the length of the \texttt{Record} structure.  If a rule matches, the actions of that rule are executed, and then the read pointer is advanced the length of the \texttt{Record} structure.  If multiple rules match a given record, each is executed in the order they appear in the bawk program.
+
+\section{Sample program}
+
+A representative sample program is shown below.  The \texttt{BEGIN} block is executed at the start of execution of the interpreter.  The read pointer, \texttt{RP}, begins at the start of the file (\texttt{RP=0}).  In the example, the read pointer is advanced 10 bytes into the file within the \texttt{BEGIN} block.  After the read pointer is advanced and the \texttt{BEGIN} block finishes executing, the interpreter begins scanning through the file forward from the read pointer position.
+\begin{lstlisting}
+(* comments follow OCaml style *)
+BEGIN {
+	(* this is the main structure used to interpret the file *)
+	struct Record { (* it must be named Record *)
+		int32 id;
+		int16 class;
+		uint32 value;
+	}
+
+	RP = RP + 10; (* advance read pointer 10 bytes *)
+	count = 0;
+}
+
+(* match all Records where id = 10 *)
+[Record.id=10] {
+	print "Class=" + Record.class;
+}
+
+[Record.id=10 && Record.class=4] {
+	print "ID 10, Class4 :: " + Record.value;
+	count = count + 1;
+}
+
+END {
+	print "Number of records with id 10 and class 4: " + count;
+}
+\end{lstlisting}
+
+As the interpreter scans through the file, it interprets the file bytes as \texttt{Record} structures.  It then checks the structures against the rule expressions.  For any rule expressions that evaluate to true, the expressions in the associated action block are evaluated.  Within the \textsl{actions} of a rule, primitive expressions will be supported, including basic arithmetic, simple string processing, and a \texttt{print} function.
+
+Variables are scoped like C, with the \texttt{BEGIN} and \texttt{END} blocks representing global scope.  As demonstrated above, this provides the ability to aggregage data from records and take actions with it in the \texttt{END} block.
+
+\section{Conclusion}
+The objective of this project is to create a simple language with some utility for quickly decoding regular binary files.  The project is not intended to support a language nearly as robust as awk, but instead to create the basic language design and a simple interpreter for the language.
+
+\end{document}

@@ -1,0 +1,27 @@
+\documentclass{article}
+%\usepackage{fullpage}
+
+\title{
+	{\large COMS W4115 - Programming Languages \& Translators}\\
+	Language Reference Manual}
+\author{Kevin Graney\\
+	\texttt{kmg2165@columbia.edu}}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\section{Introduction}
+The bawk language, who's name is derived from `binary awk', is intended to be a small, special-purpose language for the parsing of regularly formatted binary files.  In the spirit of awk, bawk will match rules in binary files and extract data based on these rules.  Bawk attempts to solve the problem of quickly decoding a regularly formatted binary file to extract information, much the way awk solves this same problem for regularly formatted text files.
+
+
+
+
+\section{Lexical Conventions}
+A program consists of a single bawk language character file.  It is translated in several phases 
+
+\section{Interpretation and processing}
+Bawk is a bytecode interpeted language, meaning the native bawk code compiles to intermediate form bytecode.  A bytecode interpreter is also provided, which interprets and executes the bytecode over the input file.  The process of compiling bawk to bytecode is done on the the fly, so the use of bawk is seamless.  From the user's perspective, the bawk interpreter takes two inputs for execution: (1) text in the bawk langauge, and (2) a binary input file to run the bawk program on.  This workflow is similar to that of a basic awk workflow, and the language itself is inspired by awk, with similar program constructs.  In bawk, however, the interpreter compiles the bawk language program to bawk bytecode, which is then executed by the bawk bytecode interpreter.
+
+\end{document}

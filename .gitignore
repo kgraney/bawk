@@ -4,6 +4,13 @@
 design_docs/*.html
 design_docs/*.css
 
+plt_docs/*.aux
+plt_docs/*.log
+plt_docs/*.pdf
+plt_docs/*.dvi
+plt_docs/*.ps
+plt_docs/*.toc
+
 scanner.ml
 parser.ml
 parser.mli
