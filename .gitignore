@@ -1,8 +1,8 @@
 *.cmo
 *.cmi
 
-docs/*.html
-docs/*.css
+design_docs/*.html
+design_docs/*.css
 
 scanner.ml
 parser.ml
