@@ -4,10 +4,17 @@ open Printf
 let make_link n1 n2 =
 	printf "%d -> %d\n" n1 n2;;
 
-let make_nonterminal ~this:this_id ?parent:(parent_id=(-1)) label =
-	printf "%d [label=\"%s\"]\n" this_id label;
+let conditional_link_with_parent this_id parent_id =
 	if parent_id != -1 then make_link parent_id this_id
 	else ();;
+
+let make_terminal ~this:this_id ?parent:(parent_id=(-1)) label =
+	printf "%d [label=\"%s\" shape=\"hexagon\" style=\"filled\"]\n" this_id label;
+	conditional_link_with_parent this_id parent_id;;
+
+let make_nonterminal ~this:this_id ?parent:(parent_id=(-1)) label =
+	printf "%d [label=\"%s\"]\n" this_id label;
+	conditional_link_with_parent this_id parent_id;;
 
 let folded_printer func parent_id =
 	(fun id x -> let this_id = id + 1 in
