@@ -9,11 +9,24 @@ rule token = parse
 	| "/*" { comment lexbuf }
 
 	(* language semantics *)
-	| ":" { COLON }
-	| ";" { SEMICOLON }
-	| "/" { FSLASH }
-	| "{" { LBRACE }
-	| "}" { RBRACE }
+	| ':'  { COLON }
+	| ';'  { SEMICOLON }
+	| '/'  { FSLASH }
+	| '{'  { LBRACE }
+	| '}'  { RBRACE }
+	| '('  { LPAREN }
+	| ')'  { RPAREN }
+	| '+'  { PLUS }
+	| '-'  { MINUS }
+	| '*'  { TIMES }
+	| '/'  { DIVIDE }
+	| '='  { ASSIGN }
+	| "==" { EQ }
+	| "!=" { NEQ }
+	| '<'  { LT }
+	| "<=" { LEQ }
+	| '>'  { GT }
+	| ">=" { GEQ }
 
 	(* type definitions *)
 	| "int1" { BIND_TYPE(Ast_types.Int_1_byte) }

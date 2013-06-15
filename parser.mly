@@ -2,7 +2,14 @@
 
 %token <Ast_types.bind_type> BIND_TYPE
 
-%token COLON SEMICOLON FSLASH RBRACE LBRACE
+/* punctuation */
+%token COLON SEMICOLON FSLASH RBRACE LBRACE RPAREN LPAREN
+
+/* operators */
+%token PLUS MINUS TIMES DIVIDE ASSIGN
+
+/* comparators */
+%token EQ NEQ LT LEQ GT GEQ
 
 %token <string> LITERAL
 %token <int> INT_LITERAL
