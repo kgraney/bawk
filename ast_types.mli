@@ -15,6 +15,7 @@ type expr =
 type pat_token =
 	| Lit of int
 	| Binding of literal * bind_type
+	| Literal of literal
 
 type pat_expr = pat_token list
 

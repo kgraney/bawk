@@ -16,6 +16,7 @@
 pat_token:
 	| INT_LITERAL { Ast_types.Lit($1) }
 	| LITERAL COLON BIND_TYPE { Ast_types.Binding($1, $3) }
+	| LITERAL { Ast_types.Literal($1) }
 
 pat_expr:
 	| { [] }
