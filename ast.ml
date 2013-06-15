@@ -38,7 +38,20 @@ let print_tree prog =
 			make_nonterminal "block" ~this:id;
 			List.fold_left (folded_printer stmt_print id) id statement_lst
 
+		| Expr(expr) ->
+			make_nonterminal "expression" ~this:id;
+			expr_print expr (id + 1) id
+
 		| _ -> printf "%d [label=\"other\"]\n" id; id;
+
+	and expr_print expr id parent =
+		match expr with
+		| LitInt(value) ->
+			make_terminal (string_of_int value) ~this:id ~parent:parent;
+			id + 1
+		| _ ->
+			make_nonterminal "other_expr" ~this:id ~parent:parent;
+			id + 1
 
 	and pat_expr_print lst id parent =
 		make_nonterminal "pat_expr" ~this:id ~parent:parent;
