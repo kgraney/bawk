@@ -18,8 +18,12 @@ parser.ml parser.mli: parser.mly
 
 clean:
 	rm -f bawk *.cmi *.cmo scanner.ml parser.ml parser.mli
+	rm -f design_docs/*.html design_docs/*.css
 
-.PHONY: clean
+design_docs: bawk
+	$(MAKE) -C ./design_docs
+
+.PHONY: clean design_docs
 
 
 ast.cmo: ast_types.cmi ast.cmi
