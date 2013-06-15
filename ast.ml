@@ -9,11 +9,11 @@ let conditional_link_with_parent this_id parent_id =
 	else ();;
 
 let make_terminal ~this:this_id ?parent:(parent_id=(-1)) label =
-	printf "%d [label=\"%s\" shape=\"hexagon\" style=\"filled\"]\n" this_id label;
+	printf "%d [label=\"%s\" shape=hexagon style=filled]\n" this_id label;
 	conditional_link_with_parent this_id parent_id;;
 
 let make_nonterminal ~this:this_id ?parent:(parent_id=(-1)) label =
-	printf "%d [label=\"%s\"]\n" this_id label;
+	printf "%d [label=\"%s\" shape=plaintext]\n" this_id label;
 	conditional_link_with_parent this_id parent_id;;
 
 let folded_printer func parent_id =
@@ -43,7 +43,8 @@ let print_tree prog =
 
 		| Block(statement_lst) ->
 			make_nonterminal "block" ~this:id;
-			List.fold_left (folded_printer stmt_print id) id statement_lst
+			List.fold_left (folded_printer stmt_print id) id
+					(List.rev statement_lst)
 
 		| Expr(expr) ->
 			make_nonterminal "expression" ~this:id;
@@ -62,7 +63,7 @@ let print_tree prog =
 
 	and pat_expr_print lst id parent =
 		make_nonterminal "pat_expr" ~this:id ~parent:parent;
-		List.fold_left (folded_printer pat_token_print id) id lst
+		List.fold_left (folded_printer pat_token_print id) id (List.rev lst)
 
 	and pat_token_print token id parent =
 		match token with
