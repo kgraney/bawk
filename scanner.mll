@@ -2,7 +2,7 @@
 
 let hex_character = ['0'-'9' 'A'-'F' 'a'-'f']
 let hex_sequence = "0x" hex_character+
-let literal = ['A'-'Z' 'a'-'z']['0'-'9' 'A'-'Z' 'a'-'z']*
+let literal = ['A'-'Z' 'a'-'z']['0'-'9' 'A'-'Z' 'a'-'z' '_']*
 
 rule token = parse
 	| [' ' '\t' '\r' '\n'] { token lexbuf }
