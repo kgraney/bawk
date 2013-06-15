@@ -21,6 +21,13 @@ let folded_printer func parent_id =
 		make_link parent_id this_id;
 		func x this_id parent_id );;
 
+let string_of_bind_type = function
+	| Int_1_byte -> "int1"
+	| Int_2_bytes -> "int2"
+	| Int_4_bytes -> "int4"
+	| UInt_2_bytes -> "uint2"
+	| UInt_4_bytes -> "uint4"
+
 (* each *_print function returns the next id available for use *)
 let print_tree prog =
 	let rec stmt_print root id parent =
@@ -58,8 +65,27 @@ let print_tree prog =
 		List.fold_left (folded_printer pat_token_print id) id lst
 
 	and pat_token_print token id parent =
-		id + 1
+		match token with
+		| Binding(literal, bind_type) ->
+			let literal_id = id + 1 in
+			let type_id = id + 2 in
+			make_nonterminal "binding" ~this:id;
+			make_terminal literal ~this:literal_id ~parent:id;
+			make_terminal (string_of_bind_type bind_type)
+					~this:type_id ~parent:id;
+			id + 3
+		| Literal(literal) ->
+			make_nonterminal "literal" ~this:id;
+			make_terminal literal ~this:(id + 1) ~parent:id;
+			id + 2
+		| Lit(value) ->
+			make_terminal (string_of_int value) ~this:id;
+			id + 1
+		| _ ->
+			make_nonterminal "foo" ~this:(id+1) ~parent:id;
+			id + 2
 	in
 	print_string "digraph AST {\n";
+	print_string "ordering = out;\n";
 	stmt_print prog 0 0;
 	print_string "}";;
