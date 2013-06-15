@@ -1,7 +1,4 @@
 
-proposal: proposal.pdf
-lrm: lrm.pdf
-
 %.pdf: %.tex
 	pdflatex $<
 	pdflatex $<
@@ -9,4 +6,4 @@ lrm: lrm.pdf
 clean:
 	rm -f *.pdf *.toc *.aux *.log
 
-.PHONY: clean proposal lrm
+.PHONY: clean
