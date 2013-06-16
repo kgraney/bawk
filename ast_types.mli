@@ -1,6 +1,7 @@
 (** Types used by the AST *)
 
 type operators = Add | Subtract | Multiply | Divide
+	| Equal | Neq | Less | Leq | Greater | Geq
 
 type bind_type =
 	| Int_1_byte
@@ -13,6 +14,7 @@ type literal = string
 
 type expr =
 	| LitInt of int
+	| ExprLiteral of string
 	| Binopt of expr * operators * expr
 	| Call of string * expr list
 

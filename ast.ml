@@ -32,6 +32,12 @@ let string_of_operator = function
 	| Subtract -> "subtract"
 	| Multiply -> "multiply"
 	| Divide -> "divide"
+	| Equal -> "equal to"
+	| Neq -> "not equal to"
+	| Less -> "less than"
+	| Leq -> "less than equal to"
+	| Greater -> "greater than"
+	| Geq -> "greater than equal to"
 
 (* each *_print function returns the next id available for use *)
 let print_tree prog =

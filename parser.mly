@@ -44,6 +44,13 @@ expr:
 	| expr MINUS  expr { Ast_types.Binopt($1, Ast_types.Subtract, $3) }
 	| expr TIMES  expr { Ast_types.Binopt($1, Ast_types.Multiply, $3) }
 	| expr FSLASH expr { Ast_types.Binopt($1, Ast_types.Divide, $3) }
+	| expr EQ     expr { Ast_types.Binopt($1, Ast_types.Equal, $3) }
+	| expr NEQ    expr { Ast_types.Binopt($1, Ast_types.Neq, $3) }
+	| expr LT     expr { Ast_types.Binopt($1, Ast_types.Less, $3) }
+	| expr LEQ    expr { Ast_types.Binopt($1, Ast_types.Leq, $3) }
+	| expr GT     expr { Ast_types.Binopt($1, Ast_types.Greater, $3) }
+	| expr GEQ    expr { Ast_types.Binopt($1, Ast_types.Geq, $3) }
+	| LITERAL { Ast_types.ExprLiteral($1) }
 	| LITERAL LPAREN expr_list RPAREN { Ast_types.Call($1, $3) }
 
 expr_list:
