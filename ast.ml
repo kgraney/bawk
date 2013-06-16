@@ -49,8 +49,7 @@ let print_tree prog =
 
 		| Block(statement_lst) ->
 			make_nonterminal "block" ~this:id;
-			List.fold_left (folded_printer stmt_print id) id
-					(List.rev statement_lst)
+			List.fold_left (folded_printer stmt_print id) id statement_lst
 
 		| Expr(expr) ->
 			make_nonterminal "expression" ~this:id;
@@ -74,7 +73,7 @@ let print_tree prog =
 
 	and pat_expr_print lst id parent =
 		make_nonterminal "pat_expr" ~this:id ~parent:parent;
-		List.fold_left (folded_printer pat_token_print id) id (List.rev lst)
+		List.fold_left (folded_printer pat_token_print id) id lst
 
 	and pat_token_print token id parent =
 		match token with

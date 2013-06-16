@@ -46,8 +46,11 @@ expr:
 	| expr FSLASH expr { Ast_types.Binopt($1, Ast_types.Divide, $3) }
 
 statement_list:
+	| rev_statement_list { List.rev $1 }
+
+rev_statement_list:
 	| { [] }
-	| statement_list statement { $2 :: $1 }
+	| rev_statement_list statement { $2 :: $1 }
 
 program:
 	statement_list { Ast_types.Block($1) }
