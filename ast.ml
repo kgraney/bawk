@@ -28,6 +28,12 @@ let string_of_bind_type = function
 	| UInt_2_bytes -> "uint2"
 	| UInt_4_bytes -> "uint4"
 
+let string_of_operator = function
+	| Add -> "add"
+	| Subtract -> "subtract"
+	| Multiply -> "multiply"
+	| Divide -> "divide"
+
 (* each *_print function returns the next id available for use *)
 let print_tree prog =
 	let rec stmt_print root id parent =
@@ -57,6 +63,11 @@ let print_tree prog =
 		| LitInt(value) ->
 			make_terminal (string_of_int value) ~this:id ~parent:parent;
 			id + 1
+		| Binopt(e1, op, e2) ->
+			let e2_id = expr_print e1 (id + 1) id in
+			let consumed_ids = expr_print e2 e2_id id in
+			make_nonterminal (string_of_operator op) ~this:id ~parent:parent;
+			consumed_ids
 		| _ ->
 			make_nonterminal "other_expr" ~this:id ~parent:parent;
 			id + 1

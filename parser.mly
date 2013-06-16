@@ -6,7 +6,7 @@
 %token COLON SEMICOLON FSLASH RBRACE LBRACE RPAREN LPAREN
 
 /* operators */
-%token PLUS MINUS TIMES DIVIDE ASSIGN
+%token PLUS MINUS TIMES ASSIGN
 
 /* comparators */
 %token EQ NEQ LT LEQ GT GEQ
@@ -14,6 +14,10 @@
 %token <string> LITERAL
 %token <int> INT_LITERAL
 %token EOF
+
+/* associativity and precedence */
+%left PLUS MINUS
+%left TIMES FSLASH
 
 %start program
 %type <Ast_types.statement> program
@@ -36,6 +40,10 @@ statement:
 
 expr:
 	| INT_LITERAL { Ast_types.LitInt($1) }
+	| expr PLUS   expr { Ast_types.Binopt($1, Ast_types.Add, $3) }
+	| expr MINUS  expr { Ast_types.Binopt($1, Ast_types.Subtract, $3) }
+	| expr TIMES  expr { Ast_types.Binopt($1, Ast_types.Multiply, $3) }
+	| expr FSLASH expr { Ast_types.Binopt($1, Ast_types.Divide, $3) }
 
 statement_list:
 	| { [] }

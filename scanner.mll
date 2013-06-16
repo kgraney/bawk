@@ -19,7 +19,7 @@ rule token = parse
 	| '+'  { PLUS }
 	| '-'  { MINUS }
 	| '*'  { TIMES }
-	| '/'  { DIVIDE }
+	  (* DIVIDE is the same as FSLASH *)
 	| '='  { ASSIGN }
 	| "==" { EQ }
 	| "!=" { NEQ }
