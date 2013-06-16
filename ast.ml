@@ -18,7 +18,6 @@ let make_nonterminal ~this:this_id ?parent:(parent_id=(-1)) label =
 
 let folded_printer func parent_id =
 	(fun id x -> let this_id = id + 1 in
-		make_link parent_id this_id;
 		func x this_id parent_id );;
 
 let string_of_bind_type = function
@@ -41,18 +40,17 @@ let print_tree prog =
 		| Pattern(pat_expr, stmt) ->
 			let pattern_id = id + 1 in
 			let stmt_id = pat_expr_print pat_expr pattern_id id in
-			let consumed_ids = stmt_print stmt (stmt_id + 1) id in
-			make_nonterminal "pattern" ~this:id;
+			let consumed_ids = stmt_print stmt (stmt_id + 1) stmt_id in
+			make_nonterminal "pattern" ~this:id ~parent:parent;
 			make_nonterminal "statement" ~this:stmt_id ~parent:id;
-			make_link stmt_id (stmt_id + 1);
 			consumed_ids
 
 		| Block(statement_lst) ->
-			make_nonterminal "block" ~this:id;
+			make_nonterminal "block" ~this:id ~parent:parent;
 			List.fold_left (folded_printer stmt_print id) id statement_lst
 
 		| Expr(expr) ->
-			make_nonterminal "expression" ~this:id;
+			make_nonterminal "expression" ~this:id ~parent:parent;
 			expr_print expr (id + 1) id
 
 		| _ -> printf "%d [label=\"other\"]\n" id; id;
@@ -87,17 +85,17 @@ let print_tree prog =
 		| Binding(literal, bind_type) ->
 			let literal_id = id + 1 in
 			let type_id = id + 2 in
-			make_nonterminal "binding" ~this:id;
+			make_nonterminal "binding" ~this:id ~parent:parent;
 			make_terminal literal ~this:literal_id ~parent:id;
 			make_terminal (string_of_bind_type bind_type)
 					~this:type_id ~parent:id;
 			id + 3
 		| Literal(literal) ->
-			make_nonterminal "literal" ~this:id;
+			make_nonterminal "literal" ~this:id ~parent:parent;
 			make_terminal literal ~this:(id + 1) ~parent:id;
 			id + 2
 		| Lit(value) ->
-			make_terminal (string_of_int value) ~this:id;
+			make_terminal (string_of_int value) ~this:id ~parent:parent;
 			id + 1
 		| _ ->
 			make_nonterminal "foo" ~this:(id+1) ~parent:id;
