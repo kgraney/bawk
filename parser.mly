@@ -3,7 +3,7 @@
 %token <Ast_types.bind_type> BIND_TYPE
 
 /* punctuation */
-%token COLON SEMICOLON FSLASH RBRACE LBRACE RPAREN LPAREN
+%token COLON SEMICOLON COMMA FSLASH RBRACE LBRACE RPAREN LPAREN
 
 /* operators */
 %token PLUS MINUS TIMES ASSIGN
@@ -44,6 +44,14 @@ expr:
 	| expr MINUS  expr { Ast_types.Binopt($1, Ast_types.Subtract, $3) }
 	| expr TIMES  expr { Ast_types.Binopt($1, Ast_types.Multiply, $3) }
 	| expr FSLASH expr { Ast_types.Binopt($1, Ast_types.Divide, $3) }
+	| LITERAL LPAREN expr_list RPAREN { Ast_types.Call($1, $3) }
+
+expr_list:
+	| rev_expr_list { List.rev $1 }
+
+rev_expr_list:
+	| expr { [$1] }
+	| rev_expr_list COMMA expr { $3 :: $1 }
 
 statement_list:
 	| rev_statement_list { List.rev $1 }

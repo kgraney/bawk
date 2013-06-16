@@ -67,6 +67,13 @@ let print_tree prog =
 			let consumed_ids = expr_print e2 e2_id id in
 			make_nonterminal (string_of_operator op) ~this:id ~parent:parent;
 			consumed_ids
+		| Call(name, arg_list) ->
+			let name_id = id + 1 in
+			let arg_id = name_id + 1 in
+			make_nonterminal "call" ~this:id ~parent:parent;
+			make_terminal name ~this:name_id ~parent:id;
+			make_nonterminal "arguments" ~this:arg_id ~parent:id;
+			List.fold_left (folded_printer expr_print arg_id) arg_id arg_list
 		| _ ->
 			make_nonterminal "other_expr" ~this:id ~parent:parent;
 			id + 1

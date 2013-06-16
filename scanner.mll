@@ -12,6 +12,7 @@ rule token = parse
 	(* language semantics *)
 	| ':'  { COLON }
 	| ';'  { SEMICOLON }
+	| ','  { COMMA }
 	| '/'  { FSLASH }
 	| '{'  { LBRACE }
 	| '}'  { RBRACE }
