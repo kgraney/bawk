@@ -50,6 +50,7 @@ expr_list:
 	| rev_expr_list { List.rev $1 }
 
 rev_expr_list:
+	| { [] }
 	| expr { [$1] }
 	| rev_expr_list COMMA expr { $3 :: $1 }
 
