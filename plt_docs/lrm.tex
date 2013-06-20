@@ -1,12 +1,16 @@
-\documentclass{article}
-%\usepackage{fullpage}
+\documentclass[letterpaper]{article}
+\usepackage{fullpage}
+\usepackage{syntax}
 
 \title{
-	{\large COMS W4115 - Programming Languages \& Translators}\\
-	Language Reference Manual}
+	{\large COMS W4115 -- Programming Languages \& Translators}\\
+	The Bawk Language Reference Manual}
 \author{Kevin Graney\\
 	\texttt{kmg2165@columbia.edu}}
 \date{\today}
+
+\setlength{\grammarparsep}{20pt plus 1pt minus 1pt} % increase separation between rules
+\setlength{\grammarindent}{5em} % increase separation between LHS/RHS
 
 \begin{document}
 \maketitle
@@ -15,13 +19,89 @@
 \section{Introduction}
 The bawk language, who's name is derived from `binary awk', is intended to be a small, special-purpose language for the parsing of regularly formatted binary files.  In the spirit of awk, bawk will match rules in binary files and extract data based on these rules.  Bawk attempts to solve the problem of quickly decoding a regularly formatted binary file to extract information, much the way awk solves this same problem for regularly formatted text files.
 
-
-
-
 \section{Lexical Conventions}
-A program consists of a single bawk language character file.  It is translated in several phases 
+A program consists of a single bawk language character file.  It is translated in several phases as described in \S\ref{sec:interpretation}.
+
+\subsection{Tokens}
+There are six classes of tokens: identifiers, keywords, constants, string literals, operators, and separators.  White space characters are ignored except as they separate tokens or when they appear in string literals.
+
+\subsection{Comments}
+Comments follow the ANSI C style, beginning with \texttt{/*} and ending with \texttt{*/}.  They do not nest, and they cannot be present in quoted strings.
+
+\subsection{Identifiers}
+An identifier is a sequence of uppercase and lowercase letters A--Z, the numerals 0--9, and the under score character.  The first character of an identifier can not be a numeral.
+
+\subsection{Keywords}
+The following identifiers are reserved for use as keywords, and may not be used otherwise: \texttt{if}, \texttt{else}, \texttt{return}.
+
+\subsection{Constants}
+Bawk only supports a single kind of constant.  An integer constant consisting of a sequence of digits is taken to be in decimal.  A sequence of digits prefaced by \texttt{0x} is taken to be in hexadecimal (base 16).
+
+
+\subsection{String Literals}
+
+\section{Expressions}
+
+\subsection{Primary Expression}
+
+\subsection{Function Calls}
+A function call is an identifier, known as the function name, followed by a pair of parenthesis containing a, possibly empty, comma-separated list of expressions.  These expressions constitute arguments to the function.  When functions are called a copy of each argument is made and used within the function, that is, all function calls pass arguments by value.
+
+\subsection{Multiplicative Operators}
+
+\subsection{Additive Operators}
+The two additive operators, \texttt{+} and \texttt{-}, are left associative.  The expected arithmetic operation is performed on integers.  The result of the \texttt{+} operator is the sum of the operands, and the result of the \texttt{-} operator is the difference of the operands.
+
+% Shift Operators?
+
+\subsection{Relational Operators}
+The relational operators are all left associative.  The operators all produce $0$ if the specified relation is false and $1$ if the specified relation is true.  The operators are \texttt{<} (less than), \texttt{>} (greater than), \texttt{<=} (less than or equal to), \texttt{>=} (greater than or equal to).
+
+\subsection{Equality Operators}
+The \texttt{==} (equal to) and \texttt{!=} (not equal to) operators compare operands for equality.  Like the relational operators, the equality operators produce $0$ if the relationship is false and $1$ if the relationship is true.  The equality operators have a lower precedence than the relational operators, and are also left associative.
+
+% Logical AND and Logical OR?
+
+\subsection{Assignment Expressions}
+
+
+\section{Statements}
+
+
+\section{Grammar}
+This section contains the grammar of the bawk language in Backus-Naur form, and serves as a formal definition of the language syntax.  Further details, including the semantic meaning, are described in the earlier sections.
+\begin{grammar}
+<program> ::= <statement-list>
+
+<statement-list> ::= <statement>
+\alt <statement-list> `;' <statement>
+
+<statement> ::= <expression-statement>
+\alt <block-statement>
+\alt <pattern-statement>
+
+<expression-statement> ::= <expression> `;'
+
+<block-statement> ::= `{' <statement-list> `}'
+
+<pattern-statement> ::= `/' <pattern-expression> `/' <statement>
+
+<pattern-expression> ::= <pattern-token>
+\alt <pattern-expression> <pattern-token>
+
+%<pattern-token> ::= 
+
+<expression> ::= <constant>
+\alt <additive-expression>
+\alt <multiplicative-expression>
+
+<additive-expression> ::= <multiplicative-expression>
+\alt <additive-expression> `+' <multiplicative-expression>
+\alt <additive-expression> `-' <multiplicative-expresssion>
+\end{grammar}
 
 \section{Interpretation and processing}
+\label{sec:interpretation}
 Bawk is a bytecode interpeted language, meaning the native bawk code compiles to intermediate form bytecode.  A bytecode interpreter is also provided, which interprets and executes the bytecode over the input file.  The process of compiling bawk to bytecode is done on the the fly, so the use of bawk is seamless.  From the user's perspective, the bawk interpreter takes two inputs for execution: (1) text in the bawk langauge, and (2) a binary input file to run the bawk program on.  This workflow is similar to that of a basic awk workflow, and the language itself is inspired by awk, with similar program constructs.  In bawk, however, the interpreter compiles the bawk language program to bawk bytecode, which is then executed by the bawk bytecode interpreter.
 
 \end{document}
