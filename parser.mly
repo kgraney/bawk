@@ -16,6 +16,8 @@
 %token EOF
 
 /* associativity and precedence */
+%left EQ NEQ
+%left LT GT LEQ GEQ
 %left PLUS MINUS
 %left TIMES FSLASH
 
