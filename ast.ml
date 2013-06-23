@@ -109,5 +109,5 @@ let print_tree prog =
 	in
 	print_string "digraph AST {\n";
 	print_string "ordering = out;\n";
-	stmt_print prog 0 0;
+	ignore (stmt_print prog 0 0);
 	print_string "}";;
