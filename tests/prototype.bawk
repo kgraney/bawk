@@ -1,7 +1,13 @@
 0xff;
 0xf1 / 0x3 + 4;
 
+/* a comment */
+
+2 + /* a comment */ 3;
+
 5 < 10 == 4;
+
+"i am a string";
 
 { 0xf2; 0xf3; }
 
