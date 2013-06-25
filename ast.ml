@@ -78,6 +78,9 @@ let print_tree prog =
 			make_terminal name ~this:name_id ~parent:id;
 			make_nonterminal "arguments" ~this:arg_id ~parent:id;
 			List.fold_left (folded_printer expr_print arg_id) arg_id arg_list
+		| LitString(str) ->
+			make_terminal str ~this:id ~parent:parent;
+			id + 1;
 		| _ ->
 			make_nonterminal "other_expr" ~this:id ~parent:parent;
 			id + 1

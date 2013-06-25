@@ -17,6 +17,7 @@ type expr =
 	| ExprLiteral of string
 	| Binopt of expr * operators * expr
 	| Call of string * expr list
+	| LitString of string
 
 type pat_token =
 	| Lit of int
