@@ -44,7 +44,7 @@ The following identifiers are reserved for use as keywords, and may not be used 
 
 \subsection{Constants}
 \label{sec:constants}
-Bawk only supports a single kind of constant: the integer constant.  Except for inside of pattern expressions (see \S\ref{sec:pattern-constants}), the following is true.  An integer constant consisting of a sequence of digits is taken to be in decimal.  A sequence of digits prefaced by \texttt{0x} is taken to be in hexadecimal (base 16).
+Bawk only supports a single kind of constant: the integer constant.  The semantic meaning of integer constants depends on the context in which they occur.  Except for inside of pattern expressions (see \S\ref{sec:pattern-constants}), the following is true.  An integer constant consisting of a sequence of digits is taken to be in decimal.  A sequence of hexadecimal digits prefaced by \texttt{0x} is taken to be in hexadecimal (base 16).
 
 \subsection{String Literals}
 A string is a sequence of characters enclosed in double quotes.
@@ -71,7 +71,7 @@ Block statements are used to combine a sequence of statements into a single stat
 \end{grammar}
 
 \subsection{Pattern Statements}
-Pattern statements allow a type of pattern matching to be performed on the binary file.  Pattern statements consist of a pattern expression (see \S\ref{sec:pattern-expressions}) and a statement.  If the pattern expression matches the data file at the location of \texttt{FP}, then the corresponding statement, typically a block statement, is executed.
+Pattern statements allow a type of pattern matching to be performed on the binary file.  Pattern statements consist of a pattern expression (see \S\ref{sec:pattern-expressions}) and a statement.  If the pattern expression matches the data file at the location of \texttt{FP}, then the corresponding statement is executed.
 \begin{grammar}
 <pattern-statement> ::= `/' <pattern-expression> `/' <statement>
 \end{grammar}
@@ -80,7 +80,17 @@ Pattern statements allow a type of pattern matching to be performed on the binar
 \label{sec:pattern-expressions}
 A pattern expression matches content in the binary data file.  Pattern expressions are distinct in syntax from the expressions described in \S\ref{sec:expressions}.
 
-Pattern expressions can contain constants or typed variable bindings.  Each constant or binding is known as a pattern term, and pattern terms are whitespace delimited.
+\begin{grammar}
+<pattern-expression> ::= $\epsilon$
+\alt <pattern-token>
+\alt <pattern-expression> <pattern-token>
+
+<pattern-token> ::= <pattern-constant>
+\alt <pattern-binding>
+\alt <pattern-variable>
+\end{grammar}
+
+Pattern expressions can contain constants or typed variable bindings.  Each constant or binding is known as a pattern term, and pattern terms are whitespace delimited.  Already bound pattern variables can also be used in pattern statements.
 
 \subsection{Constants}
 \label{sec:pattern-constants}
