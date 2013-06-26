@@ -34,6 +34,11 @@ Comments follow the ANSI C style, beginning with \texttt{/*} and ending with \te
 \subsection{Identifiers}
 An identifier is a sequence of uppercase and lowercase letters A--Z, the numerals 0--9, and the under score character.  The first character of an identifier can not be a numeral.
 
+\begin{grammar}
+<identifier> ::= <letter>
+\alt <identifier> (<letter> | <digit>)
+\end{grammar}
+
 \subsection{Keywords}
 The following identifiers are reserved for use as keywords, and may not be used otherwise: \texttt{if}, \texttt{else}, \texttt{return}.
 
@@ -43,6 +48,48 @@ Bawk only supports a single kind of constant: the integer constant.  Except for 
 
 \subsection{String Literals}
 A string is a sequence of characters enclosed in double quotes.
+
+\section{Statements}
+\label{sec:statements}
+The expressions described in \S\ref{sec:expressions} are a specific form of statement in the bawk language.  There are three different types of statements, and a list of statements forms a bawk program.  The three different types of statements are: expressions (described in \S\ref{sec:expressions}), block statements, and pattern statements.
+\begin{grammar}
+<program> ::= <statement-list>
+
+<statement-list> ::= $\epsilon$
+\alt <statement>
+\alt <statement-list> <statement>
+
+<statement> ::= <expression-statement>
+\alt <block-statement>
+\alt <pattern-statement>
+\end{grammar}
+
+\subsection{Block Statements}
+Block statements are used to combine a sequence of statements into a single statement.  The sequence of statements inside the block is executed in order when the block itself is executed.  Variables first used inside the block are locally scoped, but names from outside the block are also available.
+\begin{grammar}
+<block-statement> ::= <statement-list>
+\end{grammar}
+
+\subsection{Pattern Statements}
+Pattern statements allow a type of pattern matching to be performed on the binary file.  Pattern statements consist of a pattern expression (see \S\ref{sec:pattern-expressions}) and a statement.  If the pattern expression matches the data file at the location of \texttt{FP}, then the corresponding statement, typically a block statement, is executed.
+\begin{grammar}
+<pattern-statement> ::= `/' <pattern-expression> `/' <statement>
+\end{grammar}
+
+\section{Pattern Expressions}
+\label{sec:pattern-expressions}
+A pattern expression matches content in the binary data file.  Pattern expressions are distinct in syntax from the expressions described in \S\ref{sec:expressions}.
+
+Pattern expressions can contain constants or typed variable bindings.  Each constant or binding is known as a pattern term, and pattern terms are whitespace delimited.
+
+\subsection{Constants}
+\label{sec:pattern-constants}
+For pattern expressions, constants work differently than those described in \S\ref{sec:constants}.  All constants in pattern terms are implicitly expressed in hexadecimal form, and the \texttt{0x} prefix required to express hexadecimal constants in \S\ref{sec:constants} must be ommitted.
+
+Constants are read in hexadecimal as bytes.  For this reason leading zeros on a value have semantic meaning.  For example \texttt{/0000abcd/} matches the four byte pattern \texttt{00 00 ab cd} in the binary file, while \texttt{/abcd/} matches the two byte pattern \texttt{ab cd}.  Spaces in the constants, however, do not have any semantic meaning.  That is, \texttt{/0000abcd/} is a semantically identical pattern to \texttt{/00 00 ab cd/}.
+ 
+\subsection{Bindings}
+A bind pattern term consists of an identifier, a colon (\texttt{:}), and a bind type.  Valid bind types are: \texttt{int1}, \texttt{int2}, \texttt{int4}, \texttt{uint2}, \texttt{uint4}.  Identifiers have the same naming rules as \S\ref{sec:identifers}.  The bound identifiers and the variable identifiers share the same namespace.
 
 \section{Expressions}
 \label{sec:expressions}
@@ -70,40 +117,7 @@ The \texttt{==} (equal to) and \texttt{!=} (not equal to) operators compare oper
 \subsection{Assignment Expressions}
 
 
-\section{Statements}
-\label{sec:statements}
-The expressions described in \S\ref{sec:expressions} are a specific form of statement in the bawk language.  There are three different types of statements, and a list of statements forms a bawk program.  The three different types of statements are: expressions (described in \S\ref{sec:expressions}), block statements, and pattern statements.
-\begin{grammar}
-<program> ::= <statement-list>
 
-<statement-list> ::= <statement>
-\alt <statement-list> <statement>
-
-<statement> ::= <expression-statement>
-\alt <block-statement>
-\alt <pattern-statement>
-\end{grammar}
-
-\subsection{Block Statements}
-Block statements are used to combine a sequence of statements into a single statement.  The sequence of statements inside the block is executed in order when the block itself is executed.
-
-\subsection{Pattern Statements}
-Pattern statements allow a type of pattern matching to be performed on the binary file.  Pattern statements consist of a pattern expression (see \S\ref{sec:pattern-expressions}) and a statement.  If the pattern expression matches the data file at the location of \texttt{FP}, then the corresponding statement, typically a block statement, is executed.
-
-\section{Pattern Expressions}
-\label{sec:pattern-expressions}
-A pattern expression matches content in the binary data file.  Pattern expressions are distinct in syntax from the expressions described in \S\ref{sec:expressions}.
-
-Pattern expressions can contain constants or typed variable bindings.  Each constant or binding is known as a pattern term, and pattern terms are whitespace delimited.
-
-\subsection{Constants}
-\label{sec:pattern-constants}
-For pattern expressions, constants work differently than those described in \S\ref{sec:constants}.  All constants in pattern terms are implicitly expressed in hexadecimal form, and the \texttt{0x} prefix required to express hexadecimal constants in \S\ref{sec:constants} must be ommitted.
-
-Constants are read in hexadecimal as bytes.  For this reason leading zeros on a value have semantic meaning.  For example \texttt{/0000abcd/} matches the four byte pattern \texttt{00 00 ab cd} in the binary file, while \texttt{/abcd/} matches the two byte pattern \texttt{ab cd}.  Spaces in the constants, however, do not have any semantic meaning.  That is, \texttt{/0000abcd/} is a semantically identical pattern to \texttt{/00 00 ab cd/}.
- 
-\subsection{Bindings}
-A bind pattern term consists of an identifier, a colon (\texttt{:}), and a bind type.  Valid bind types are: \texttt{int1}, \texttt{int2}, \texttt{int4}, \texttt{uint2}, \texttt{uint4}.  Identifiers have the same naming rules as \S\ref{sec:identifers}.  The bound identifiers and the variable identifiers share the same namespace.
 
 \section{Grammar}
 This section contains the grammar of the bawk language in Backus-Naur form, and serves as a formal definition of the language syntax.  Further details, including the semantic meaning, are described in the earlier sections.
