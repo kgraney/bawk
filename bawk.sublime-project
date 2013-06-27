@@ -1,0 +1,21 @@
+{
+	"folders":
+	[
+		{
+			"path": "/Users/kevin/Documents/Columbia University/COMS W4115/project/bawk",
+			"file_exclude_patterns":
+			[
+				"*.cmi",
+				"*.cmo"
+			]
+		}
+	],
+	"build_systems":
+	[
+		{
+			"name": "bawk makefile",
+			"cmd": ["/bin/zsh", "-c", "make"],
+			"working_dir": "$project_path"
+		}
+	]
+}

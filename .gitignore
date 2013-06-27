@@ -10,11 +10,13 @@ plt_docs/*.pdf
 plt_docs/*.dvi
 plt_docs/*.ps
 plt_docs/*.toc
+plt_docs/*.out
 
 scanner.ml
 parser.ml
 parser.mli
 bawk
 
+*.sublime-workspace
 
 .DS_Store
