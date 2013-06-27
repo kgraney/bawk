@@ -20,7 +20,8 @@ type expr =
 	| LitString of string
 
 type pat_token =
-	| Lit of int
+	| PatternByte of int
+	| PatternBytes of pat_token list
 	| Binding of literal * bind_type
 	| Literal of literal
 

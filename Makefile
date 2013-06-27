@@ -5,7 +5,7 @@ default: bawk plt_docs/lrm.pdf plt_docs/proposal.pdf
 	cd $(shell dirname $@); pdflatex $(shell basename $<)
 	cd $(shell dirname $@); pdflatex $(shell basename $<)
 
-OBJS = utile.cmo scanner.cmo parser.cmo ast.cmo bawk.cmo
+OBJS = utile.cmo scanner.cmo parser_help.cmo parser.cmo ast.cmo bawk.cmo
 
 bawk: $(OBJS)
 	ocamlc -o bawk $(OBJS)
@@ -32,18 +32,20 @@ design_docs: bawk
 
 .PHONY: clean default design_docs
 
-
 ast.cmo: ast_types.cmi ast.cmi
 ast.cmx: ast_types.cmi ast.cmi
 bawk.cmo: scanner.cmo parser.cmi ast.cmi
 bawk.cmx: scanner.cmx parser.cmx ast.cmx
-parser.cmo: ast.cmi parser.cmi
-parser.cmx: ast.cmx parser.cmi
-scanner.cmo: utile.cmi parser.cmi
-scanner.cmx: utile.cmx parser.cmx
+parser.cmo: parser_help.cmi ast_types.cmi parser.cmi
+parser.cmx: parser_help.cmx ast_types.cmi parser.cmi
+parser_help.cmo: ast_types.cmi parser_help.cmi
+parser_help.cmx: ast_types.cmi parser_help.cmi
+scanner.cmo: parser.cmi ast_types.cmi
+scanner.cmx: parser.cmx ast_types.cmi
 utile.cmo: utile.cmi
 utile.cmx: utile.cmi
 ast.cmi: ast_types.cmi
 ast_types.cmi:
-parser.cmi: ast.cmi
+parser.cmi: ast_types.cmi
+parser_help.cmi: ast_types.cmi
 utile.cmi:

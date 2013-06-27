@@ -43,7 +43,7 @@ let char_for_backslash = function
 
 let hex_character = ['0'-'9' 'A'-'F' 'a'-'f']
 let hex_sequence = "0x" hex_character+
-let digit_sequence = ['0'-'9']+
+let hexdigit_sequence = hex_character+
 let literal = ['A'-'Z' 'a'-'z' '_']['0'-'9' 'A'-'Z' 'a'-'z' '_']*
 
 let newline = ('\010' | "\013\010")
@@ -82,8 +82,8 @@ rule token = parse
 
 	| literal as lit { LITERAL(lit) }
 
-	| digit_sequence as lit { INT_LITERAL(int_of_string lit)}
-	| hex_sequence as lit { INT_LITERAL(int_of_string lit) }
+	| hexdigit_sequence as lit { INT_LITERAL(lit)}
+	| hex_sequence as lit { INT_LITERAL(lit) }
 
 	(* string literals *)
 	| "\"" { reset_string_buffer();

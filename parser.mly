@@ -1,4 +1,6 @@
-%{ %}
+%{
+open Parser_help
+%}
 
 %token <Ast_types.bind_type> BIND_TYPE
 
@@ -13,7 +15,7 @@
 
 %token <string> STRING_LITERAL
 %token <string> LITERAL
-%token <int> INT_LITERAL
+%token <string> INT_LITERAL
 %token EOF
 
 /* associativity and precedence */
@@ -28,7 +30,7 @@
 %%
 
 pat_token:
-	| INT_LITERAL { Ast_types.Lit($1) }
+	| INT_LITERAL { parse_pattern_const $1 }
 	| LITERAL COLON BIND_TYPE { Ast_types.Binding($1, $3) }
 	| LITERAL { Ast_types.Literal($1) }
 
@@ -42,7 +44,7 @@ statement:
 	| FSLASH pat_expr FSLASH statement { Ast_types.Pattern($2,$4) }
 
 expr:
-	| INT_LITERAL { Ast_types.LitInt($1) }
+	| INT_LITERAL { Ast_types.LitInt(int_of_string $1) }
 	| expr PLUS   expr { Ast_types.Binopt($1, Ast_types.Add, $3) }
 	| expr MINUS  expr { Ast_types.Binopt($1, Ast_types.Subtract, $3) }
 	| expr TIMES  expr { Ast_types.Binopt($1, Ast_types.Multiply, $3) }

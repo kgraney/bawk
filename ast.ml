@@ -59,7 +59,7 @@ let print_tree prog =
 			make_nonterminal "expression" ~this:id ~parent:parent;
 			expr_print expr (id + 1) id
 
-		| _ -> printf "%d [label=\"other\"]\n" id; id;
+		(*| _ -> printf "%d [label=\"other\"]\n" id; id;*)
 
 	and expr_print expr id parent =
 		match expr with
@@ -103,12 +103,15 @@ let print_tree prog =
 			make_nonterminal "literal" ~this:id ~parent:parent;
 			make_terminal literal ~this:(id + 1) ~parent:id;
 			id + 2
-		| Lit(value) ->
+		| PatternBytes(values) ->
+			make_nonterminal "bytes" ~this:id ~parent:parent;
+			List.fold_left (folded_printer pat_token_print id) id values
+		| PatternByte(value) ->
 			make_terminal (string_of_int value) ~this:id ~parent:parent;
 			id + 1
-		| _ ->
+		(*| _ ->
 			make_nonterminal "foo" ~this:(id+1) ~parent:id;
-			id + 2
+			id + 2*)
 	in
 	print_string "digraph AST {\n";
 	print_string "ordering = out;\n";
