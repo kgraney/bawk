@@ -1,3 +1,9 @@
+default: bawk plt_docs/lrm.pdf plt_docs/proposal.pdf
+
+
+%.pdf: %.tex
+	cd $(shell dirname $@); pdflatex $(shell basename $<)
+	cd $(shell dirname $@); pdflatex $(shell basename $<)
 
 OBJS = utile.cmo scanner.cmo parser.cmo ast.cmo bawk.cmo
 
@@ -19,11 +25,12 @@ parser.ml parser.mli: parser.mly
 clean:
 	rm -f bawk *.cmi *.cmo scanner.ml parser.ml parser.mli
 	rm -f design_docs/*.html design_docs/*.css
+	rm -f plt_docs/*.pdf plt_docs/*.toc plt_docs/*.aux plt_docs/*.log
 
 design_docs: bawk
 	$(MAKE) -C ./design_docs
 
-.PHONY: clean design_docs
+.PHONY: clean default design_docs
 
 
 ast.cmo: ast_types.cmi ast.cmi
