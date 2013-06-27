@@ -81,6 +81,10 @@ let print_tree prog =
 		| LitString(str) ->
 			make_terminal str ~this:id ~parent:parent;
 			id + 1;
+		| Assign(name, expr) ->
+			make_nonterminal "assign" ~this:id ~parent:parent;
+			make_nonterminal name ~this:(id + 1) ~parent:id;
+			expr_print expr (id + 2) id
 		| _ ->
 			make_nonterminal "other_expr" ~this:id ~parent:parent;
 			id + 1

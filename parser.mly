@@ -19,6 +19,7 @@ open Parser_help
 %token EOF
 
 /* associativity and precedence */
+%right ASSIGN
 %left EQ NEQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
@@ -55,6 +56,7 @@ expr:
 	| expr LEQ    expr { Ast_types.Binopt($1, Ast_types.Leq, $3) }
 	| expr GT     expr { Ast_types.Binopt($1, Ast_types.Greater, $3) }
 	| expr GEQ    expr { Ast_types.Binopt($1, Ast_types.Geq, $3) }
+	| LITERAL ASSIGN expr { Ast_types.Assign($1, $3) }
 	| LITERAL { Ast_types.ExprLiteral($1) }
 	| LITERAL LPAREN expr_list RPAREN { Ast_types.Call($1, $3) }
 	| STRING_LITERAL { Ast_types.LitString ($1) }

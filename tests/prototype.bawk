@@ -5,6 +5,12 @@
 
 2 + /* a comment */ 3;
 
+foo = 100;
+
+foo = 100 + 10;
+
+ball = court = 100;
+
 5 < 10 == 4;
 
 "i am a string";

@@ -18,6 +18,7 @@ type expr =
 	| Binopt of expr * operators * expr
 	| Call of string * expr list
 	| LitString of string
+	| Assign of string * expr
 
 type pat_token =
 	| PatternByte of int
