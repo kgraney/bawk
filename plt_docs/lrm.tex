@@ -32,6 +32,7 @@ There are six classes of tokens: identifiers, keywords, constants, string litera
 Comments follow the ANSI C style, beginning with \texttt{/*} and ending with \texttt{*/}.  They do not nest, and they cannot be present in quoted strings.
 
 \subsection{Identifiers}
+\label{sec:identifiers}
 An identifier is a sequence of uppercase and lowercase letters A--Z, the numerals 0--9, and the under score character.  The first character of an identifier can not be a numeral.
 
 \begin{grammar}
@@ -47,7 +48,30 @@ The following identifiers are reserved for use as keywords, and may not be used 
 Bawk only supports a single kind of constant: the integer constant.  The semantic meaning of integer constants depends on the context in which they occur.  Except for inside of pattern expressions (see \S\ref{sec:pattern-constants}), the following is true.  An integer constant consisting of a sequence of digits is taken to be in decimal.  A sequence of hexadecimal digits prefaced by \texttt{0x} is taken to be in hexadecimal (base 16).
 
 \subsection{String Literals}
+\label{sec:strings}
 A string is a sequence of characters enclosed in double quotes.
+
+\section{Meaning of Identifiers}
+Identifiers can have several different meanings based on how they are first used.  Once an identifier is associated with a particular meaning it cannot be disassociated with that meaning.
+
+\subsection{Function Name}
+Previously unused identifiers become function names once a function is declared with a given name.
+
+\subsection{Variable Name}
+\label{sec:variables}
+Previously unused identifiers become variable names once an assignment expression (see \S\ref{sec:assignment}) executes with the identifier on the left hand side.
+
+\subsection{Pattern Binding Variable Name}
+\label{sec:bind-variables}
+Previously unused identifiers become binded variable names once a pattern expression with a binding pattern token (see \S\ref{sec:pattern-bindings}) matches.
+
+\subsection{Special Identifiers}
+There are certain special identifiers that behave like variables, but whose meaning affects the program execution.
+\begin{itemize}
+\item \texttt{RP} -- The \textsl{file pointer} variable  indicates where in the file pattern statements begin matching (see \S\ref{sec:pattern-statement}).  The value contains the number of bytes from the beginning of the file.  At the start of the bawk program this value defaults to $0$.
+\item \texttt{LE} -- Force \textsl{little-endian} interpretation of integers and strings while pattern matching in the file.  A value of $0$ indicates big-endian interpretation and a value of $1$ indicates little-endian interpretation.  The default value is $0$.
+\item \texttt{_} -- The \texttt{trash} variable is a write-only identifier that cannot be read.  It is useful for binding don't-care values in pattern matching expressions.
+\end{itemize}
 
 \section{Statements}
 \label{sec:statements}
@@ -62,19 +86,111 @@ The expressions described in \S\ref{sec:expressions} are a specific form of stat
 <statement> ::= <expression-statement>
 \alt <block-statement>
 \alt <pattern-statement>
+\alt <function-declaration>
 \end{grammar}
 
 \subsection{Block Statements}
 Block statements are used to combine a sequence of statements into a single statement.  The sequence of statements inside the block is executed in order when the block itself is executed.  Variables first used inside the block are locally scoped, but names from outside the block are also available.
 \begin{grammar}
-<block-statement> ::= <statement-list>
+<block-statement> ::= `{' <statement-list> `}'
 \end{grammar}
 
 \subsection{Pattern Statements}
-Pattern statements allow a type of pattern matching to be performed on the binary file.  Pattern statements consist of a pattern expression (see \S\ref{sec:pattern-expressions}) and a statement.  If the pattern expression matches the data file at the location of \texttt{FP}, then the corresponding statement is executed.
+\label{sec:pattern-statement}
+Pattern statements allow a type of pattern matching to be performed on the binary file.  Pattern statements consist of a pattern expression (see \S\ref{sec:pattern-expressions}) and a statement.  If the pattern expression matches the data file at the location of \texttt{RP} at the time of evaluation of the pattern statement, then the corresponding statement is executed.  If the pattern does not match, then the statement is not executed.
 \begin{grammar}
 <pattern-statement> ::= `/' <pattern-expression> `/' <statement>
 \end{grammar}
+
+\subsection{Expression Statements}
+An expression statement is an expression followed by a semicolon.  Expressions are described in \S\ref{sec:expressions}.
+
+\begin{grammar}
+<expression-statement> ::= <expression> `;'
+\end{grammar}
+
+\subsection{Function Declaration}
+A function declaration is a statement declaring a new function.  Function declarations consist of an identifer to serve as the function name, followed by an open parenthesis, an optional comma separated list of identifiers to serve as function parameter names, a closing parenthesis, and a statement to serve as the function body.
+
+\begin{grammar}
+<function-declaration> ::= <identifier> `(' <function-decl-params> `)' <statement> 
+
+<function-decl-params> ::= $\epsilon$
+\alt <identifier>
+\alt <function-decl-params> `,' <identifier>
+\end{grammar}
+
+\section{Expressions}
+\label{sec:expressions}
+
+\subsection{Primary Expression}
+
+\begin{grammar}
+<primary-expression> ::= <constant>
+\alt <identifier>
+\alt <string-literal>
+\alt `(' <expression> `)'
+
+<expression> ::= <assignment-expression>
+\alt <additive-expression>
+\end{grammar}
+
+\subsection{Function Calls}
+A function call is an identifier, known as the function name, followed by a pair of parenthesis containing a, possibly empty, comma-separated list of expressions.  These expressions constitute arguments to the function.  When functions are called a copy of each argument is made and used within the function, that is, all function calls pass arguments by value.
+\begin{grammar}
+<function-call> ::= <identifier> `(' <function-call-params> `)'
+
+<function-call-params> ::= $\epsilon$
+\alt <expression>
+\alt <function-call-params> `,' <expression>
+\end{grammar}
+
+\subsection{Multiplicative Operators}
+The multiplicative operators, \texttt{*} and \texttt{/}, are left associative.  The result of \texttt{*} is multiplication of the two operands, and the result of \texttt{/} is the quotient of the two operands.  The quotient with a second operator of zero yields an undefined result.
+\begin{grammar}
+<multiplicative-expression> ::= <primary-expression>
+\alt <multiplicative-expression> `*' <primary-expression>
+\alt <multiplicative-expression> `/' <primary-expression>
+\end{grammar}
+
+\subsection{Additive Operators}
+The two additive operators, \texttt{+} and \texttt{-}, are left associative.  The expected arithmetic operation is performed on integers.  The result of the \texttt{+} operator is the sum of the operands, and the result of the \texttt{-} operator is the difference of the operands.
+\begin{grammar}
+<additive-expression> ::= <multiplicative-expression>
+\alt <additive-expression> `+' <multiplicative-expression>
+\alt <additive-expression> `-' <multiplicative-expresssion>
+\end{grammar}
+
+% Shift Operators?
+
+\subsection{Relational Operators}
+The relational operators are all left associative.  The operators all produce $0$ if the specified relation is false and $1$ if the specified relation is true.  The operators are \texttt{<} (less than), \texttt{>} (greater than), \texttt{<=} (less than or equal to), \texttt{>=} (greater than or equal to).
+\begin{grammar}
+<relational-expression> ::= <additive-expression>
+\alt <relational-expression> `<' <additive-expression>
+\alt <relational-expression> `>' <additive-expression>
+\alt <relational-expression> `<=' <additive-expression>
+\alt <relational-expression> `>=' <additive-expression>
+\end{grammar}
+
+\subsection{Equality Operators}
+The \texttt{==} (equal to) and \texttt{!=} (not equal to) operators compare operands for equality.  Like the relational operators, the equality operators produce $0$ if the relationship is false and $1$ if the relationship is true.  The equality operators have a lower precedence than the relational operators, and are also left associative.
+\begin{grammar}
+<equality-expression> ::= <relational-expression>
+\alt <equality-expression> `==' <relational-expression>
+\alt <equality-expression> `!=' <relational-expression>
+\end{grammar}
+
+% Logical AND and Logical OR?
+
+\subsection{Assignment Expressions}
+\label{sec:assignment}
+All assignment expressions require a modifiable identifier on the left hand side.  The only type of modifiable identifier is a variable (see \S\ref{sec:variables}).  The assignment operator, \texttt{=}, is right-associative and the return value of assignment is the value being assigned.
+\begin{grammar}
+<assignment-expression> ::= <equality-expression>
+\alt <identifier> `=' <assignment-expression>
+\end{grammar}
+
 
 \section{Pattern Expressions}
 \label{sec:pattern-expressions}
@@ -88,74 +204,25 @@ A pattern expression matches content in the binary data file.  Pattern expressio
 <pattern-token> ::= <pattern-constant>
 \alt <pattern-binding>
 \alt <pattern-variable>
+\alt <string-literal>
 \end{grammar}
 
 Pattern expressions can contain constants or typed variable bindings.  Each constant or binding is known as a pattern term, and pattern terms are whitespace delimited.  Already bound pattern variables can also be used in pattern statements.
 
 \subsection{Constants}
 \label{sec:pattern-constants}
-For pattern expressions, constants work differently than those described in \S\ref{sec:constants}.  All constants in pattern terms are implicitly expressed in hexadecimal form, and the \texttt{0x} prefix required to express hexadecimal constants in \S\ref{sec:constants} must be ommitted.
+Inside pattern expressions, constants work differently than those described in \S\ref{sec:constants}.  All constants in pattern terms are implicitly expressed in hexadecimal form, and the \texttt{0x} prefix required to express hexadecimal constants in \S\ref{sec:constants} must be ommitted.
 
-Constants are read in hexadecimal as bytes.  For this reason leading zeros on a value have semantic meaning.  For example \texttt{/0000abcd/} matches the four byte pattern \texttt{00 00 ab cd} in the binary file, while \texttt{/abcd/} matches the two byte pattern \texttt{ab cd}.  Spaces in the constants, however, do not have any semantic meaning.  That is, \texttt{/0000abcd/} is a semantically identical pattern to \texttt{/00 00 ab cd/}.
+Constants are read in hexadecimal as bytes.  For this reason leading zeros on a value have semantic meaning.  For example \texttt{/0000abcd/} matches the four byte pattern \texttt{00 00 ab cd} in the binary file, while \texttt{/abcd/} matches the two byte pattern \texttt{ab cd}.  Spaces in the constants, however, do not have any semantic meaning as long as the spaces are on byte boundaries.  That is, \texttt{/0000abcd/} is a semantically identical pattern to \texttt{/00 00 ab cd/}.  It is important to note, however that \texttt{/01ab/} is \emph{not} identical to \texttt{/0 1 a b/}.
+
+If a constant has an odd number of hexadecimal digits, an implied \texttt{0} is added to the left-most side of the value.  That is \texttt{/123/} is the same as \texttt{/0123/} (is the same as \texttt{/01 23/}).  For this reason the example of \texttt{/0 1 a b/} is identical to \texttt{/00 01 0a 0b/} (and \texttt{/00010a0b/}).
  
 \subsection{Bindings}
-A bind pattern term consists of an identifier, a colon (\texttt{:}), and a bind type.  Valid bind types are: \texttt{int1}, \texttt{int2}, \texttt{int4}, \texttt{uint2}, \texttt{uint4}.  Identifiers have the same naming rules as \S\ref{sec:identifers}.  The bound identifiers and the variable identifiers share the same namespace.
+\label{sec:pattern-bindings}
+A bind pattern term consists of an identifier, a colon (\texttt{:}), and a bind type.  Valid bind types are: \texttt{int1}, \texttt{int2}, \texttt{int4}, \texttt{uint2}, \texttt{uint4}.  Identifiers have the same naming rules as \S\ref{sec:identifiers}.
 
-\section{Expressions}
-\label{sec:expressions}
-
-\subsection{Primary Expression}
-
-\subsection{Function Calls}
-A function call is an identifier, known as the function name, followed by a pair of parenthesis containing a, possibly empty, comma-separated list of expressions.  These expressions constitute arguments to the function.  When functions are called a copy of each argument is made and used within the function, that is, all function calls pass arguments by value.
-
-\subsection{Multiplicative Operators}
-
-\subsection{Additive Operators}
-The two additive operators, \texttt{+} and \texttt{-}, are left associative.  The expected arithmetic operation is performed on integers.  The result of the \texttt{+} operator is the sum of the operands, and the result of the \texttt{-} operator is the difference of the operands.
-
-% Shift Operators?
-
-\subsection{Relational Operators}
-The relational operators are all left associative.  The operators all produce $0$ if the specified relation is false and $1$ if the specified relation is true.  The operators are \texttt{<} (less than), \texttt{>} (greater than), \texttt{<=} (less than or equal to), \texttt{>=} (greater than or equal to).
-
-\subsection{Equality Operators}
-The \texttt{==} (equal to) and \texttt{!=} (not equal to) operators compare operands for equality.  Like the relational operators, the equality operators produce $0$ if the relationship is false and $1$ if the relationship is true.  The equality operators have a lower precedence than the relational operators, and are also left associative.
-
-% Logical AND and Logical OR?
-
-\subsection{Assignment Expressions}
-
-
-
-
-\section{Grammar}
-This section contains the grammar of the bawk language in Backus-Naur form, and serves as a formal definition of the language syntax.  Further details, including the semantic meaning, are described in the earlier sections.
-\begin{grammar}
-
-<statement> ::= <expression-statement>
-\alt <block-statement>
-\alt <pattern-statement>
-
-<expression-statement> ::= <expression> `;'
-
-<block-statement> ::= `{' <statement-list> `}'
-
-<pattern-statement> ::= `/' <pattern-expression> `/' <statement>
-
-<pattern-expression> ::= <pattern-token>
-\alt <pattern-expression> <pattern-token>
-
-%<pattern-token> ::= 
-
-<expression> ::= <constant>
-\alt <additive-expression>
-\alt <multiplicative-expression>
-
-<additive-expression> ::= <multiplicative-expression>
-\alt <additive-expression> `+' <multiplicative-expression>
-\alt <additive-expression> `-' <multiplicative-expresssion>
-\end{grammar}
+\subsection{String Literals}
+String literals are also supported in pattern expressions.  The syntax is exactly the same as strings in \S\ref{sec:strings}.  The string literal is converted to and interpreted as a sequence of ASCII-encoded bytes, exactly how constants are (see \S\ref{sec:pattern-constants}).  
 
 \section{Interpretation and processing}
 \label{sec:interpretation}
