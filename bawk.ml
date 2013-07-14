@@ -1,17 +1,28 @@
+(** The main function of the bawk compiler *)
 
-(*
-let rec eval = function
-	| Ast.Block(x) -> eval_statements x
-	| Ast.Expr(x) -> x
+(** Possible actions for the compiler to take *)
+type action = Ast | Compile
 
-and eval_statements x =
-	List.map eval x;;
-*)
+(** [decode_action] reads the [argv] array of command line arguments and returns
+	the action that the compiler is being asked to take.  This is fairly
+	primitive, and only the first argument is used to make the decision. *)
+let decode_action argv =
+	if Array.length argv > 1 then
+		List.assoc argv.(1) [
+			("-ast", Ast);
+			("-c", Compile);
+		]
+	else Compile;;
+
+(** [parse_channel] runs an input channel through the lexer and parser phases
+	of the compiler returning an AST. *)
+let parse_channel channel =
+	let lexbuf = Lexing.from_channel channel in
+	let program = Parser.program Scanner.token lexbuf in
+	program;;
 
 let _ =
-	let lexbuf = Lexing.from_channel stdin in
-	let program = Parser.program Scanner.token lexbuf in
-	Ast.print_tree program;;
-
-(*  let result = eval program in
-		print_endline (string_of_int result) *)
+	let action = decode_action Sys.argv in
+	match action with
+		  Ast -> Ast.print_tree (parse_channel stdin)
+		| Compile -> Printf.printf("Compilation unimplemented\n")
