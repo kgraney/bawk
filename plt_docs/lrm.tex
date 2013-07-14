@@ -19,7 +19,7 @@
 \section{Introduction}
 The bawk language, who's name is derived from `binary awk', is intended to be a small, special-purpose language for the parsing of regularly formatted binary files.  In the spirit of awk, bawk will match rules in binary files and extract data based on these rules.  Bawk attempts to solve the problem of quickly decoding a regularly formatted binary file to extract information, much the way awk solves this same problem for regularly formatted text files.
 
-\section{Syntax Notation}
+%\section{Syntax Notation}
 
 
 \section{Lexical Conventions}
@@ -129,6 +129,7 @@ A function declaration is a statement declaring a new function.  Function declar
 <primary-expression> ::= <constant>
 \alt <identifier>
 \alt <string-literal>
+\alt <function-call>
 \alt `(' <expression> `)'
 
 <expression> ::= <assignment-expression>
@@ -219,7 +220,22 @@ If a constant has an odd number of hexadecimal digits, an implied \texttt{0} is 
  
 \subsection{Bindings}
 \label{sec:pattern-bindings}
-A bind pattern term consists of an identifier, a colon (\texttt{:}), and a bind type.  Valid bind types are: \texttt{int1}, \texttt{int2}, \texttt{int4}, \texttt{uint2}, \texttt{uint4}.  Identifiers have the same naming rules as \S\ref{sec:identifiers}.
+A bind pattern term consists of an identifier, a colon (\texttt{:}), and a bind type.  Valid bind types are: \texttt{int1}, \texttt{int2}, \texttt{int4}, \texttt{uint2}, \texttt{uint4}.  The \texttt{int1} type matches a one-byte integer, the \texttt{uint4} type matches an unsigned 4-byte integer.  Identifiers have the same naming rules as \S\ref{sec:identifiers}.
+\begin{grammar}
+<pattern-binding> ::= <identifier> `:' <bind-type>
+
+<bind-type> ::= `int1'
+\alt `int2'
+\alt `int4'
+\alt `uint2'
+\alt `uint4'
+\end{grammar}
+
+\subsection{Pattern Variables}
+Previously bound pattern variables can be used in a pattern expression to match the previously bound value.
+\begin{grammar}
+<pattern-variable> ::= <identifier>
+\end{grammar}
 
 \subsection{String Literals}
 String literals are also supported in pattern expressions.  The syntax is exactly the same as strings in \S\ref{sec:strings}.  The string literal is converted to and interpreted as a sequence of ASCII-encoded bytes, exactly how constants are (see \S\ref{sec:pattern-constants}).  
