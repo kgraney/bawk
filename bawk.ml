@@ -25,4 +25,4 @@ let _ =
 	let action = decode_action Sys.argv in
 	match action with
 		  Ast -> Ast.print_tree (parse_channel stdin)
-		| Compile -> Printf.printf("Compilation unimplemented\n")
+		| Compile -> Bytecode.print_bytecode (parse_channel stdin)
