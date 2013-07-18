@@ -4,7 +4,7 @@ open Bytecode_types
 let rec translate_expr expr =
 	match expr with
 	  LitInt(integer) ->
-		[Bytecode_types.Lit(10)]
+		[Bytecode_types.Lit(integer)]
 	| Binopt(e1, op, e2) ->
 		translate_expr e1 @ translate_expr e2 @ [Bin op]
 
