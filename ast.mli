@@ -26,3 +26,7 @@ val make_link: int -> int -> unit
 	The parent's ID is the second argument and the print function is the 
 	first argument. *)
 val folded_printer: ('a -> int -> int -> 'b) -> int -> int -> 'a -> 'b
+
+(** [string_of_operator] returns a string of the bytecode instruction for
+	the given operator. *)
+val string_of_operator: Ast_types.operators -> string

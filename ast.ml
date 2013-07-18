@@ -28,16 +28,16 @@ let string_of_bind_type = function
 	| UInt_4_bytes -> "uint4"
 
 let string_of_operator = function
-	| Add -> "add"
-	| Subtract -> "subtract"
-	| Multiply -> "multiply"
-	| Divide -> "divide"
-	| Equal -> "equal to"
-	| Neq -> "not equal to"
-	| Less -> "less than"
-	| Leq -> "less than equal to"
-	| Greater -> "greater than"
-	| Geq -> "greater than equal to"
+	| Add -> "Add"
+	| Subtract -> "Sub"
+	| Multiply -> "Mul"
+	| Divide -> "Div"
+	| Equal -> "Eq"
+	| Neq -> "Neq"
+	| Less -> "Lt"
+	| Leq -> "Leq"
+	| Greater -> "Gt"
+	| Geq -> "Geq"
 
 (* each *_print function returns the next id available for use *)
 let print_tree prog =
