@@ -1,10 +1,16 @@
 open Ast_types
-open Bytecode
+open Bytecode_types
+
+let translate_expr expr =
+	match expr with
+	  LitInt(integer) ->
+		[Bytecode_types.Lit(10)]
 
 let rec translate stmt = 
-(*	match stmt with
+	match stmt with
 	  Block(stmt_list) ->
-		List.map translate stmt_list
-	| Patter(pat_expr, stmt) ->
-*)
-	[];;
+		List.flatten (List.map translate stmt_list)
+	| Expr(expr) ->
+		translate_expr expr
+	| Pattern(pat_expr, stmt) ->
+		[];;

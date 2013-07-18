@@ -5,8 +5,8 @@ OBJS = utile.cmo \
 	parser_help.cmo \
 	parser.cmo \
 	ast.cmo \
-	bytecode.cmo \
 	compile.cmo \
+	bytecode.cmo \
 	bawk.cmo
 
 default: bawk plt_docs/lrm.pdf plt_docs/proposal.pdf design_docs
