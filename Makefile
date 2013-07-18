@@ -9,7 +9,7 @@ OBJS = utile.cmo \
 	compile.cmo \
 	bawk.cmo
 
-default: bawk plt_docs/lrm.pdf plt_docs/proposal.pdf
+default: bawk plt_docs/lrm.pdf plt_docs/proposal.pdf design_docs
 
 %.pdf: %.tex
 	cd $(shell dirname $@); pdflatex $(shell basename $<)
