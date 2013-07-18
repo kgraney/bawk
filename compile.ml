@@ -1,10 +1,12 @@
 open Ast_types
 open Bytecode_types
 
-let translate_expr expr =
+let rec translate_expr expr =
 	match expr with
 	  LitInt(integer) ->
 		[Bytecode_types.Lit(10)]
+	| Binopt(e1, op, e2) ->
+		translate_expr e1 @ translate_expr e2 @ [Bin op]
 
 let rec translate stmt = 
 	match stmt with
