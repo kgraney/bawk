@@ -8,6 +8,9 @@ let rec translate_expr expr =
 	| Binopt(e1, op, e2) ->
 		translate_expr e1 @ translate_expr e2 @ [Bin op]
 
+let translated_pattern expr =
+	[Rdb(10)]
+
 let rec translate stmt = 
 	match stmt with
 	  Block(stmt_list) ->
@@ -15,4 +18,5 @@ let rec translate stmt =
 	| Expr(expr) ->
 		translate_expr expr
 	| Pattern(pat_expr, stmt) ->
-		[];;
+		translated_pattern pat_expr @
+		translate stmt;;

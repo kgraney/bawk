@@ -14,3 +14,4 @@ type instruction =
 	| Bne of int    (* Branch relative if top-of-stack is non-zero *)
 	| Bra of int    (* Branch relative *)
 	| Hlt           (* Terminate *)
+	| Rdb of int    (* Read a number of bytes from the file *)
