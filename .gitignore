@@ -1,5 +1,6 @@
 *.cmo
 *.cmi
+.*.mk
 
 design_docs/*.html
 design_docs/*.css
