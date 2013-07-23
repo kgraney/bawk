@@ -9,11 +9,15 @@ type env = {
 
 let built_in_functions = ["print"];;
 
-let clean_environment = 
-	let pure = {
-		function_map = StringMap.empty;
-	} in
-	StringMap.add 
+let clean_environment =
+	let built_ins =
+		List.fold_left (fun map item ->
+			let (value, key) = item in
+			StringMap.add key (value - 1) map
+		) StringMap.empty (Utile.enumerate built_in_functions) in
+	{
+		function_map = built_ins;
+	}
 
 let rec translate_expr env expr =
 	let recurse = translate_expr env in
