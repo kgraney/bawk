@@ -14,7 +14,8 @@ let clean_environment =
 		List.fold_left (fun map item ->
 			let (value, key) = item in
 			StringMap.add key (value - 1) map
-		) StringMap.empty (Utile.enumerate built_in_functions) in
+		) StringMap.empty (Utile.enumerate ~step:(fun x -> x - 1)
+				built_in_functions) in
 	{
 		function_map = built_ins;
 	}
