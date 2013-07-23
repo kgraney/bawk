@@ -10,3 +10,7 @@ let string_of_instruction = function
 let print_bytecode stmt =
 	let instructions = Compile.translate_program stmt in
 	List.iter (fun x -> print_endline (string_of_instruction x)) instructions;;
+
+let execute_bytecode stmt =
+	let instructions = Compile.translate_program stmt in
+	();;

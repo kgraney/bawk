@@ -4,7 +4,7 @@ open Compile
 module StringMap = Map.Make(String) (* TODO: can we use the other def? *)
 
 (** Possible actions for the compiler to take *)
-type action = Ast | Compile
+type action = Ast | Compile | Execute
 	| D_print_clean_env
 
 (** [decode_action] reads the [argv] array of command line arguments and returns
@@ -15,9 +15,10 @@ let decode_action argv =
 		List.assoc argv.(1) [
 			("-ast", Ast);
 			("-c", Compile);
+			("-e", Execute);
 			("-D-print-clean-env", D_print_clean_env)
 		]
-	else Compile;;
+	else Execute;;
 
 (** [parse_channel] runs an input channel through the lexer and parser phases
 	of the compiler returning an AST. *)
@@ -31,7 +32,7 @@ let _ =
 	match action with
 		  Ast -> Ast.print_tree (parse_channel stdin)
 		| Compile -> Bytecode.print_bytecode (parse_channel stdin)
-
+		| Execute -> Bytecode.execute_bytecode (parse_channel stdin)
 
 		(* Debug actions *)
 		| D_print_clean_env ->
