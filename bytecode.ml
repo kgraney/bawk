@@ -7,6 +7,7 @@ let string_of_instruction = function
 	| Bin(operator) -> "Bin " ^ Ast.string_of_operator operator
 	| Rdb(num_bytes) -> sprintf "Rdb %d" num_bytes
 	| Jsr(num) -> sprintf "Jsr %d" num
+	| Hlt -> "Hlt"
 
 let print_bytecode stmt =
 	let instructions = Compile.translate_program stmt in
@@ -30,6 +31,7 @@ let execute_instructions instructions =
 				exec fp (sp - 1) (pc + 1)
 			| Jsr (-1) -> print_endline (string_of_int stack.(sp - 1));
 				exec fp sp (pc + 1)
+			| Hlt -> ()
 	in exec 0 0 0
 
 let execute_bytecode stmt =

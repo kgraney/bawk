@@ -47,4 +47,4 @@ let rec translate env stmt =
 
 let translate_program stmt =
 	let env = clean_environment in
-	translate env stmt;;
+	translate env stmt @ [Hlt];;
