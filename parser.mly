@@ -36,8 +36,11 @@ pat_token:
 	| LITERAL { Ast_types.Literal($1) }
 
 pat_expr:
+	rev_pat_expr { List.rev $1 }
+
+rev_pat_expr:
 	| { [] }
-	| pat_expr pat_token { $2 :: $1 }
+	| rev_pat_expr pat_token { $2 :: $1 }
 
 statement:
 	| expr SEMICOLON { Ast_types.Expr($1) }
