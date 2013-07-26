@@ -32,7 +32,24 @@ let rec translate_expr env expr =
 		(List.concat (List.map recurse args)) @ [Jsr function_addr]
 
 let translated_pattern expr =
-	[Rdb(10)]
+	let rec check_item = function
+		  PatternByte(value) -> [
+				Rdb 1;
+				Lit value;
+				Bin Subtract;
+				Bne 111 (* branch to failed match *)
+			]
+		| PatternBytes(bytes) ->
+			List.flatten (List.map check_item bytes)
+		| Binding(literal, bind_type) ->
+			let num_bytes = Ast.size_of_bind_type bind_type in
+			[
+				Rdb num_bytes;
+				(* TODO: store bytes into a binding variable *)
+			]
+	in
+	List.flatten (List.map check_item expr);;
+
 
 let rec translate env stmt =
 	let recurse = translate env in
