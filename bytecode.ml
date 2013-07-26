@@ -11,7 +11,9 @@ let string_of_instruction = function
 
 let print_bytecode stmt =
 	let instructions = Compile.translate_program stmt in
-	List.iter (fun x -> print_endline (string_of_instruction x)) instructions;;
+	List.iter (fun x -> let (i, ins) = x in
+			printf "%9d: %s\n" i (string_of_instruction ins))
+		(Utile.enumerate instructions);;
 
 let execute_instructions instructions =
 	let stack = Array.make 1024 0 in
