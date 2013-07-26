@@ -20,6 +20,13 @@ let folded_printer func parent_id =
 	(fun id x -> let this_id = id + 1 in
 		func x this_id parent_id );;
 
+let size_of_bind_type = function
+	| Int_1_byte -> 1
+	| Int_2_bytes -> 2
+	| Int_4_bytes -> 4
+	| UInt_2_bytes -> 2
+	| UInt_4_bytes -> 4
+
 let string_of_bind_type = function
 	| Int_1_byte -> "int1"
 	| Int_2_bytes -> "int2"

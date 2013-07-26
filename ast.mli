@@ -7,6 +7,10 @@ val print_tree: Ast_types.statement -> unit
 (** [string_of_bind_type] converts an [Ast_types.bind_type] to a [string] *)
 val string_of_bind_type: Ast_types.bind_type -> string
 
+(** [size_of_bind_type] returns the size, in bytes, of an [Ast_types.bind_type]
+	*)
+val size_of_bind_type: Ast_types.bind_type -> int
+
 (** [make_terminal] creates a terminal node for the node with an id of [this],
 	and labels it with the string argument.  If the optional [parent] argument
 	is provided a link is also created between this node and the parent. *)
