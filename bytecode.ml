@@ -5,8 +5,10 @@ open Ast_types
 let string_of_instruction = function
 	  Lit(integer) -> sprintf "Lit %d" integer
 	| Bin(operator) -> "Bin " ^ Ast.string_of_operator operator
-	| Rdb(num_bytes) -> sprintf "Rdb %d" num_bytes
+	| Rdb(num) -> sprintf "Rdb %d" num
 	| Jsr(num) -> sprintf "Jsr %d" num
+	| Beq(addr) -> sprintf "Beq %d" addr
+	| Bne(addr) -> sprintf "Bne %d" addr
 	| Hlt -> "Hlt"
 
 let print_bytecode stmt =
