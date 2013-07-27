@@ -11,6 +11,8 @@ let string_of_instruction = function
 	| Bne(addr) -> sprintf "Bne %d" addr
 	| Hlt -> "Hlt"
 
+	| Label(id) -> sprintf "Label %d (PSEUDO)" id
+
 let print_bytecode stmt =
 	let instructions = Compile.translate_program stmt in
 	List.iter (fun x -> let (i, ins) = x in
@@ -35,6 +37,9 @@ let execute_instructions instructions on_file =
 				exec fp (sp - 1) (pc + 1)
 			| Jsr (-1) -> print_endline (string_of_int stack.(sp - 1));
 				exec fp sp (pc + 1)
+			| Bne addr -> if stack.(sp - 1) == 0 then
+				exec fp sp (pc + 1) else
+				exec fp sp addr
 			| Hlt -> ()
 	in exec 0 0 0
 

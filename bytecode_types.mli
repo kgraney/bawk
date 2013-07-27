@@ -15,3 +15,5 @@ type instruction =
 	| Bra of int    (* Branch relative *)
 	| Hlt           (* Terminate *)
 	| Rdb of int    (* Read a number of bytes from the file *)
+
+	| Label of int  (* Pseudo bytecode instruction used by compiler *)

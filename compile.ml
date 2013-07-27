@@ -20,6 +20,11 @@ let clean_environment =
 		function_map = built_ins;
 	}
 
+let label_counter = ref 0;;
+let get_new_label () =
+	label_counter := !label_counter + 1;
+	!label_counter;;
+
 let rec translate_expr env expr =
 	let recurse = translate_expr env in
 	match expr with
@@ -31,13 +36,13 @@ let rec translate_expr env expr =
 		let function_addr = StringMap.find func_name env.function_map in
 		(List.concat (List.map recurse args)) @ [Jsr function_addr]
 
-let translated_pattern expr =
+let translated_pattern expr end_label =
 	let rec check_item = function
 		  PatternByte(value) -> [
 				Rdb 1;
 				Lit value;
 				Bin Subtract;
-				Bne 111 (* branch to failed match *)
+				Bne end_label (* branch to failed match *)
 			]
 		| PatternBytes(bytes) ->
 			List.flatten (List.map check_item bytes)
@@ -59,8 +64,10 @@ let rec translate env stmt =
 	| Expr(expr) ->
 		translate_expr env expr
 	| Pattern(pat_expr, stmt) ->
-		translated_pattern pat_expr @
-		recurse stmt;;
+		let end_label = get_new_label () in
+		translated_pattern pat_expr end_label @
+		recurse stmt @
+		[Label end_label];;
 
 let translate_program stmt =
 	let env = clean_environment in
