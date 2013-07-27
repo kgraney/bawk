@@ -61,7 +61,7 @@ let execute_instructions instructions on_file =
 				exec fp (sp - 1) (pc + 1)
 			| Bne addr -> if stack.(sp - 1) == 0 then
 				exec fp sp (pc + 1) else
-				exec fp sp addr
+				exec fp (sp - 1) addr
 			| Hlt -> ()
 	in exec 0 0 0
 
