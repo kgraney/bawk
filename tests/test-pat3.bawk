@@ -1,0 +1,13 @@
+/8950/ { /* should match */
+	print(10);
+}
+
+/8951/ { /* should not match */
+	print(20);
+}
+
+/8950/ { /* should match */
+	print(40);
+}
+
+print(30);

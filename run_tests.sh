@@ -63,7 +63,7 @@ Check() {
     generatedfiles=""
 
     generatedfiles="$generatedfiles ${basename}.i.out" &&
-    Run "$BAWK" "-e" "<" $1 ">" ${basename}.i.out &&
+    Run "$BAWK" "-e tests/lichtenstein.png" "<" $1 ">" ${basename}.i.out &&
     Compare ${basename}.i.out ${reffile}.out ${basename}.i.diff
 
     #generatedfiles="$generatedfiles ${basename}.c.out" &&

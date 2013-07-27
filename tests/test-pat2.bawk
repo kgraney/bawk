@@ -1,0 +1,9 @@
+/89504e47/ { /* should match */
+	print(10);
+}
+
+/89504e47/ { /* should match */
+	print(20);
+}
+
+print(30);
