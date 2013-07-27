@@ -1,6 +1,7 @@
 DEP_FILENAME=.ocamldeps.mk
 
 OBJS = utile.cmo \
+	reader.cmo \
 	scanner.cmo \
 	parser_help.cmo \
 	parser.cmo \

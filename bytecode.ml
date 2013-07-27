@@ -36,6 +36,10 @@ let execute_instructions instructions on_file =
 				exec fp (sp - 1) (pc + 1)
 			| Jsr (-1) -> print_endline (string_of_int stack.(sp - 1));
 				exec fp sp (pc + 1)
+			| Rdb (1) ->
+				stack.(sp) <- Reader.read_byte on_file;
+				Printf.printf "Read byte: %x\n" stack.(sp);
+				exec fp (sp + 1) (pc + 1)
 			| Bne addr -> if stack.(sp - 1) == 0 then
 				exec fp sp (pc + 1) else
 				exec fp sp addr
