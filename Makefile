@@ -16,7 +16,7 @@ default: bawk plt_docs/lrm.pdf plt_docs/proposal.pdf design_docs
 	cd $(shell dirname $@); pdflatex $(shell basename $<)
 
 bawk: $(OBJS)
-	ocamlc -o bawk $(OBJS)
+	ocamlc -o bawk $(shell ocamldep -sort *.ml | sed 's/\.ml/\.cmo/g')
 
 scanner.ml: scanner.mll
 	ocamllex scanner.mll
