@@ -93,8 +93,7 @@ let rec translate env stmt =
 		[ Ldp ] @
 		translated_pattern pat_expr end_label @
 		recurse stmt @
-		[ Skp ] @
-		[Label end_label];;
+		[Label end_label; Skp];;
 
 let translate_program stmt =
 	let env = clean_environment in
