@@ -7,6 +7,7 @@ let string_of_instruction = function
 	| Bin(operator) -> "Bin " ^ Ast.string_of_operator operator
 	| Rdb(num) -> sprintf "Rdb %d" num
 	| Jsr(num) -> sprintf "Jsr %d" num
+	| Bra(addr) -> sprintf "Bra %d" addr
 	| Beq(addr) -> sprintf "Beq %d" addr
 	| Bne(addr) -> sprintf "Bne %d" addr
 	| Ldp -> "Ldp"
@@ -62,6 +63,7 @@ let execute_instructions instructions on_file =
 			| Bne addr -> if stack.(sp - 1) == 0 then
 				exec fp sp (pc + 1) else
 				exec fp (sp - 1) addr
+			| Bra addr -> exec fp sp addr
 			| Hlt -> ()
 	in exec 0 0 0
 

@@ -42,6 +42,7 @@ let resolve_labels instructions =
 		  [] -> []
 		(* rewrite branches *)
 		| Bne(id)::t -> Bne label_map.(id) :: emit_resolution t
+		| Bra(id)::t -> Bra label_map.(id) :: emit_resolution t
 
 		(* remove the pseudo instructions *)
 		| Label(id)::t -> emit_resolution t
@@ -93,7 +94,12 @@ let rec translate env stmt =
 		[ Ldp ] @
 		translated_pattern pat_expr end_label @
 		recurse stmt @
-		[Label end_label; Skp];;
+		[Label end_label; Skp]
+	| FunctionDecl(decl) ->
+		let end_label = get_new_label () in
+		[ Bra end_label ] @
+		recurse decl.body @
+		[ Label end_label ];;
 
 let translate_program stmt =
 	let env = clean_environment in
