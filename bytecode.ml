@@ -17,7 +17,7 @@ let print_bytecode stmt =
 			printf "%9d: %s\n" i (string_of_instruction ins))
 		(Utile.enumerate instructions);;
 
-let execute_instructions instructions =
+let execute_instructions instructions on_file =
 	let stack = Array.make 1024 0 in
 	let rec exec fp sp pc =
 		match instructions.(pc) with
@@ -38,6 +38,6 @@ let execute_instructions instructions =
 			| Hlt -> ()
 	in exec 0 0 0
 
-let execute_bytecode stmt =
+let execute_bytecode stmt on_file =
 	let instructions = Compile.translate_program stmt in
-	execute_instructions (Array.of_list instructions);;
+	execute_instructions (Array.of_list instructions) on_file;;

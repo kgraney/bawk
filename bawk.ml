@@ -20,6 +20,13 @@ let decode_action argv =
 		]
 	else Execute;;
 
+let decode_in_file argv =
+	if Array.length argv > 2 then
+		open_in_bin argv.(2)
+	else
+		open_in_bin "/dev/random";;
+
+
 (** [parse_channel] runs an input channel through the lexer and parser phases
 	of the compiler returning an AST. *)
 let parse_channel channel =
@@ -29,10 +36,11 @@ let parse_channel channel =
 
 let _ =
 	let action = decode_action Sys.argv in
+	let in_file = decode_in_file Sys.argv in
 	match action with
 		  Ast -> Ast.print_tree (parse_channel stdin)
 		| Compile -> Bytecode.print_bytecode (parse_channel stdin)
-		| Execute -> Bytecode.execute_bytecode (parse_channel stdin)
+		| Execute -> Bytecode.execute_bytecode (parse_channel stdin) in_file
 
 		(* Debug actions *)
 		| D_print_clean_env ->
