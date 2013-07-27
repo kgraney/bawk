@@ -28,7 +28,13 @@ type pat_token =
 
 type pat_expr = pat_token list
 
-type statement =
+type func_decl = {
+	fname: string;
+	arguments: string list;
+	body: statement;
+}
+and statement =
 	| Pattern of pat_expr * statement
 	| Block of statement list
 	| Expr of expr
+	| FunctionDecl of func_decl

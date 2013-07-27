@@ -80,6 +80,7 @@ rule token = parse
 	| "uint2" { BIND_TYPE(Ast_types.UInt_2_bytes) }
 	| "uint4" { BIND_TYPE(Ast_types.UInt_4_bytes) }
 
+	| "def" { DEF }
 	| literal as lit { LITERAL(lit) }
 
 	| hexdigit_sequence as lit { INT_LITERAL(lit)}

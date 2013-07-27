@@ -5,7 +5,7 @@ open Parser_help
 %token <Ast_types.bind_type> BIND_TYPE
 
 /* punctuation */
-%token COLON SEMICOLON COMMA FSLASH RBRACE LBRACE RPAREN LPAREN
+%token COLON SEMICOLON COMMA FSLASH RBRACE LBRACE RPAREN LPAREN DEF
 
 /* operators */
 %token PLUS MINUS TIMES ASSIGN
@@ -46,6 +46,12 @@ statement:
 	| expr SEMICOLON { Ast_types.Expr($1) }
 	| LBRACE statement_list RBRACE { Ast_types.Block($2) }
 	| FSLASH pat_expr FSLASH statement { Ast_types.Pattern($2,$4) }
+	| DEF LITERAL LPAREN lit_list RPAREN LBRACE statement_list RBRACE
+		{ Ast_types.FunctionDecl({
+			Ast_types.fname = $2;
+			Ast_types.arguments = $4;
+			Ast_types.body = Ast_types.Block($7)})
+		}
 
 expr:
 	| INT_LITERAL { Ast_types.LitInt(int_of_string $1) }
@@ -78,6 +84,14 @@ statement_list:
 rev_statement_list:
 	| { [] }
 	| rev_statement_list statement { $2 :: $1 }
+
+lit_list:
+	| rev_lit_list { List.rev $1 }
+
+rev_lit_list:
+	| { [] }
+	| LITERAL { [$1] }
+	| rev_lit_list COMMA LITERAL { $3 :: $1 }
 
 program:
 	statement_list { Ast_types.Block($1) }

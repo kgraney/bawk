@@ -20,6 +20,10 @@ let folded_printer func parent_id =
 	(fun id x -> let this_id = id + 1 in
 		func x this_id parent_id );;
 
+let print_plain str id parent =
+	make_nonterminal str ~this:id ~parent:parent;
+	id + 1
+
 let size_of_bind_type = function
 	| Int_1_byte -> 1
 	| Int_2_bytes -> 2
@@ -66,7 +70,20 @@ let print_tree prog =
 			make_nonterminal "expression" ~this:id ~parent:parent;
 			expr_print expr (id + 1) id
 
-		(*| _ -> printf "%d [label=\"other\"]\n" id; id;*)
+		| FunctionDecl(decl) ->
+			let stmt_id = stmt_print decl.body (id + 1) id in
+			let consumed_ids = List.fold_left
+					(folded_printer print_plain stmt_id) (stmt_id + 1)
+					decl.arguments
+			in
+			make_nonterminal "arguments" ~this:stmt_id ~parent:id;
+			make_nonterminal (sprintf "fdef:%s" decl.fname) ~this:id
+					~parent:parent;
+			consumed_ids
+
+		| _ ->
+			make_nonterminal "other_stmt" ~this:id ~parent:parent;
+			id + 1
 
 	and expr_print expr id parent =
 		match expr with
