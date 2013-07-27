@@ -2,11 +2,11 @@
 
 (** [execute_bytecode] is a function called from the main argument parser.  It
 	generates and then executes the bytecode instructions. *)
-val execute_bytecode: Ast_types.statement -> in_channel -> unit
+val execute_bytecode: Bytecode_types.instruction list -> in_channel -> unit
 
 (** [print_bytecode] is a function called from the main argument parser.  It
 	generates and then prints out the bytecode instructions. *)
-val print_bytecode: Ast_types.statement -> unit
+val print_bytecode: Bytecode_types.instruction list -> unit
 
 (** [string_of_instruction] converts a bytecode instruction into a string
 	representation *)

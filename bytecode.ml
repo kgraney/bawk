@@ -13,11 +13,10 @@ let string_of_instruction = function
 
 	| Label(id) -> sprintf "Label %d (PSEUDO)" id
 
-let print_bytecode stmt =
-	let instructions = Compile.translate_program stmt in
+let print_bytecode instructions =
 	List.iter (fun x -> let (i, ins) = x in
 			printf "%9d: %s\n" i (string_of_instruction ins))
-		(Utile.enumerate instructions);;
+		(enumerate_instructions instructions);;
 
 let execute_instructions instructions on_file =
 	let stack = Array.make 1024 0 in
@@ -43,6 +42,5 @@ let execute_instructions instructions on_file =
 			| Hlt -> ()
 	in exec 0 0 0
 
-let execute_bytecode stmt on_file =
-	let instructions = Compile.translate_program stmt in
+let execute_bytecode instructions on_file =
 	execute_instructions (Array.of_list instructions) on_file;;
