@@ -37,11 +37,12 @@ let parse_channel channel =
 let _ =
 	let action = decode_action Sys.argv in
 	let in_file = decode_in_file Sys.argv in
-	let instructions = Compile.translate_program (parse_channel stdin) in
 	match action with
 		  Ast -> Ast.print_tree (parse_channel stdin)
-		| Compile -> Bytecode.print_bytecode instructions
-		| Execute -> Bytecode.execute_bytecode instructions in_file
+		| Compile -> Bytecode.print_bytecode
+			(Compile.translate_program (parse_channel stdin))
+		| Execute -> Bytecode.execute_bytecode
+			(Compile.translate_program (parse_channel stdin)) in_file
 
 		(* Debug actions *)
 		| D_print_clean_env ->
