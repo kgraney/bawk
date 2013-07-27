@@ -9,6 +9,8 @@ let string_of_instruction = function
 	| Jsr(num) -> sprintf "Jsr %d" num
 	| Beq(addr) -> sprintf "Beq %d" addr
 	| Bne(addr) -> sprintf "Bne %d" addr
+	| Ldp -> "Ldp"
+	| Skp -> "Skp"
 	| Hlt -> "Hlt"
 
 	| Label(id) -> sprintf "Label %d (PSEUDO)" id
@@ -47,8 +49,16 @@ let execute_instructions instructions on_file =
 				exec fp (sp - 1) (pc + 1)
 			| Rdb (1) ->
 				stack.(sp) <- Reader.read_byte on_file;
-				Printf.printf "Read byte: %x\n" stack.(sp);
+				(* Printf.printf "Read byte: %x\n" stack.(sp); *)
 				exec fp (sp + 1) (pc + 1)
+			| Ldp ->
+				stack.(sp) <- Reader.get_pos on_file;
+				(* Printf.printf "Store position: %d\n" stack.(sp); *)
+				exec fp (sp + 1) (pc + 1)
+			| Skp ->
+				Reader.set_pos on_file stack.(sp - 1);
+				(* Printf.printf "Set position: %d\n" stack.(sp - 1); *)
+				exec fp (sp - 1) (pc + 1)
 			| Bne addr -> if stack.(sp - 1) == 0 then
 				exec fp sp (pc + 1) else
 				exec fp sp addr

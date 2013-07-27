@@ -48,3 +48,9 @@ let advance ic n =
 	let pos = pos_in ic in
 	let new_pos = pos + n in
 	seek_in ic new_pos;;
+
+let get_pos ic =
+	pos_in ic;;
+
+let set_pos ic n =
+	seek_in ic n;;

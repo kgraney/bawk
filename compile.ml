@@ -90,8 +90,10 @@ let rec translate env stmt =
 		translate_expr env expr
 	| Pattern(pat_expr, stmt) ->
 		let end_label = get_new_label () in
+		[ Ldp ] @
 		translated_pattern pat_expr end_label @
 		recurse stmt @
+		[ Skp ] @
 		[Label end_label];;
 
 let translate_program stmt =

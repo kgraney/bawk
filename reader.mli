@@ -21,6 +21,12 @@ val read_string_fixed: in_channel -> int -> string
 	order, and accumulate a sum of every byte shifted by it's position in the list. *)
 val read_unsigned: in_channel -> int -> int
 
+(** [get_pos] returns the position in the file *)
+val get_pos: in_channel -> int
+
+(** [set_pos] set the position in the file *)
+val set_pos: in_channel -> int -> unit
+
 val advance: in_channel -> int -> unit
 
 
