@@ -13,6 +13,15 @@ let string_of_instruction = function
 
 	| Label(id) -> sprintf "Label %d (PSEUDO)" id
 
+let is_pseudo = function
+	  Label(id) -> true
+	| _ -> false
+
+let enumerate_instructions lst =
+	Utile.enumerate ~step:(fun x y ->
+		if is_pseudo x then y
+		else y + 1) lst;;
+
 let print_bytecode instructions =
 	List.iter (fun x -> let (i, ins) = x in
 			printf "%9d: %s\n" i (string_of_instruction ins))

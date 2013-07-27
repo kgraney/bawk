@@ -25,6 +25,31 @@ let get_new_label () =
 	label_counter := !label_counter + 1;
 	!label_counter;;
 
+let form_label_map instructions =
+	let arr = Array.make (!label_counter + 1) 0 in
+	let enumerated = Bytecode.enumerate_instructions instructions in
+	List.iter (fun x ->
+		let (addr, instr) = x in
+		match instr with
+			  Label (id) -> arr.(id) <- addr; ()
+			| _ -> ()
+		) enumerated;
+	arr;;
+
+let resolve_labels instructions =
+	let label_map = form_label_map instructions in
+	let rec emit_resolution = function
+		  [] -> []
+		(* rewrite branches *)
+		| Bne(id)::t -> Bne label_map.(id) :: emit_resolution t
+
+		(* remove the pseudo instructions *)
+		| Label(id)::t -> emit_resolution t
+
+		(* all other instructions *)
+		| h::t -> h :: emit_resolution t
+	in emit_resolution instructions;;
+
 let rec translate_expr env expr =
 	let recurse = translate_expr env in
 	match expr with
@@ -71,4 +96,4 @@ let rec translate env stmt =
 
 let translate_program stmt =
 	let env = clean_environment in
-	translate env stmt @ [Hlt];;
+	resolve_labels (translate env stmt @ [Hlt]);;

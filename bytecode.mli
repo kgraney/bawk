@@ -15,3 +15,10 @@ val string_of_instruction: Bytecode_types.instruction -> string
 (** [execute_instructions] interprets an array of bytecode instructions
 	as a program, executing said instructions. *)
 val execute_instructions: Bytecode_types.instruction array -> in_channel -> unit
+
+(** [is_pseudo] returns true if the given bytecode instruction is a pseudo
+	instruction and false otherwise *)
+val is_pseudo: Bytecode_types.instruction -> bool
+
+val enumerate_instructions: Bytecode_types.instruction list ->
+	(int * Bytecode_types.instruction) list
