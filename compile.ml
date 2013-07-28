@@ -20,6 +20,10 @@ let clean_environment =
 		function_map = built_ins;
 	}
 
+let add_function env fname addr =
+	let function_map_new = StringMap.add fname addr env.function_map in
+	{env with function_map = function_map_new}
+
 let label_counter = ref 0;;
 let get_new_label () =
 	label_counter := !label_counter + 1;
@@ -43,6 +47,7 @@ let resolve_labels instructions =
 		(* rewrite branches *)
 		| Bne(id)::t -> Bne label_map.(id) :: emit_resolution t
 		| Bra(id)::t -> Bra label_map.(id) :: emit_resolution t
+		| Jsr(id)::t when id >= 0 -> Jsr label_map.(id) :: emit_resolution t
 
 		(* remove the pseudo instructions *)
 		| Label(id)::t -> emit_resolution t
@@ -59,7 +64,7 @@ let rec translate_expr env expr =
 	| Binopt(e1, op, e2) ->
 		recurse e1 @ recurse e2 @ [Bin op]
 	| Call(func_name, args) ->
-		let function_addr = StringMap.find func_name env.function_map in
+		let function_addr = StringMap.find func_name !env.function_map in
 		(List.concat (List.map recurse args)) @ [Jsr function_addr]
 
 let translated_pattern expr end_label =
@@ -96,11 +101,13 @@ let rec translate env stmt =
 		recurse stmt @
 		[Label end_label; Skp]
 	| FunctionDecl(decl) ->
+		let start_label = get_new_label () in
 		let end_label = get_new_label () in
-		[ Bra end_label ] @
+		env := add_function !env decl.fname start_label;
+		[ Bra end_label; Label start_label ] @
 		recurse decl.body @
-		[ Label end_label ];;
+		[ Rts; Label end_label ];;
 
 let translate_program stmt =
-	let env = clean_environment in
+	let env = ref clean_environment in
 	resolve_labels (translate env stmt @ [Hlt]);;

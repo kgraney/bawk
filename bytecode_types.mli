@@ -9,7 +9,7 @@ type instruction =
 	| Sfp of int    (* Store frame pointer relative *)
 	| Jsr of int    (* Call function by absolute address *)
 	| Ent of int    (* Push FP, FP -> SP, SP += i *)
-	| Rts of int    (* Restore FP, SP, consume formals, push result *)
+	| Rts    (* Restore FP, SP, consume formals, push result *)
 	| Beq of int    (* Branch absolute if top-of-stack is zero *)
 	| Bne of int    (* Branch absolute if top-of-stack is non-zero *)
 	| Bra of int    (* Branch absolute *)
