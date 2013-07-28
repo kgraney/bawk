@@ -1,0 +1,7 @@
+print(1);
+
+def food () {
+	print(100);
+}
+
+print(2);
