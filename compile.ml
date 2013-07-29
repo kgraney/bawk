@@ -3,8 +3,15 @@ open Bytecode_types
 
 module StringMap = Map.Make(String)
 
+type pattern_binding = {
+	size: int;
+	name: string;
+}
+
 type env = {
 	function_map: int StringMap.t; (* address for each defined function name *)
+	variable_map: int StringMap.t;
+	bindings: pattern_binding StringMap.t;
 }
 
 let built_in_functions = ["print"];;
@@ -18,11 +25,29 @@ let clean_environment =
 				built_in_functions) in
 	{
 		function_map = built_ins;
+		variable_map = StringMap.empty;
+		bindings = StringMap.empty;
 	}
 
 let add_function env fname addr =
 	let function_map_new = StringMap.add fname addr env.function_map in
 	{env with function_map = function_map_new}
+
+let global_counter = ref 0;;
+let get_next_global () =
+	global_counter := !global_counter + 1;
+	!global_counter;;
+
+let add_variable env vname =
+	let variable_map_new = StringMap.add vname (get_next_global ())
+			env.variable_map in
+	{env with variable_map = variable_map_new}
+
+let get_var_address env vname =
+	try StringMap.find vname !env.variable_map;
+	with Not_found ->
+		env := add_variable !env vname;
+		StringMap.find vname !env.variable_map;;
 
 let label_counter = ref 0;;
 let get_new_label () =
@@ -61,11 +86,19 @@ let rec translate_expr env expr =
 	match expr with
 	  LitInt(integer) ->
 		[Bytecode_types.Lit(integer)]
+	| ExprLiteral(var_name) ->
+		let vaddr = get_var_address env var_name in
+		[ Lod vaddr ]
 	| Binopt(e1, op, e2) ->
 		recurse e1 @ recurse e2 @ [Bin op]
 	| Call(func_name, args) ->
 		let function_addr = StringMap.find func_name !env.function_map in
 		(List.concat (List.map recurse args)) @ [Jsr function_addr]
+	| Assign(var_name, expr) ->
+		let vaddr = get_var_address env var_name in
+		translate_expr env expr @ [
+			Str vaddr
+		];;
 
 let translated_pattern expr end_label =
 	let rec check_item = function

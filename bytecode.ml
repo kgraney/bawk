@@ -8,6 +8,8 @@ let string_of_instruction = function
 	| Rdb(num) -> sprintf "Rdb %d" num
 	| Jsr(num) -> sprintf "Jsr %d" num
 	| Rts -> "Rts"
+	| Lod(num) -> sprintf "Lod %d" num
+	| Str(num) -> sprintf "Str %d" num
 	| Bra(addr) -> sprintf "Bra %d" addr
 	| Beq(addr) -> sprintf "Beq %d" addr
 	| Bne(addr) -> sprintf "Bne %d" addr
@@ -33,6 +35,7 @@ let print_bytecode instructions =
 
 let execute_instructions instructions on_file =
 	let stack = Array.make 1024 0 in
+	let globals = Array.make 1024 0 in
 	let rec exec fp sp pc =
 		match instructions.(pc) with
 			  Lit i -> stack.(sp) <- i;
@@ -70,6 +73,12 @@ let execute_instructions instructions on_file =
 				exec fp (sp + 1) addr
 			| Rts ->
 				exec fp (sp - 1) stack.(sp - 1)
+			| Lod index ->
+				stack.(sp) <- globals.(index);
+				exec fp (sp + 1) (pc + 1)
+			| Str index ->
+				globals.(index) <- stack.(sp - 1);
+				exec fp (sp - 1) (pc + 1)
 			| Hlt -> ()
 	in exec 0 0 0
 
