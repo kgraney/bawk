@@ -56,6 +56,9 @@ let execute_instructions instructions on_file =
 				stack.(sp) <- Reader.read_byte on_file;
 				(* Printf.printf "Read byte: %x\n" stack.(sp); *)
 				exec fp (sp + 1) (pc + 1)
+			| Rdb (n) ->
+				stack.(sp) <- Reader.read_unsigned on_file n;
+				exec fp (sp + 1) (pc + 1)
 			| Ldp ->
 				stack.(sp) <- Reader.get_pos on_file;
 				(* Printf.printf "Store position: %d\n" stack.(sp); *)

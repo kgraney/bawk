@@ -4,8 +4,8 @@ open Bytecode_types
 module StringMap = Map.Make(String)
 
 type pattern_binding = {
+	loc: int;
 	size: int;
-	name: string;
 }
 
 type env = {
@@ -43,11 +43,33 @@ let add_variable env vname =
 			env.variable_map in
 	{env with variable_map = variable_map_new}
 
+let add_binding env bname size =
+	let vaddr = try StringMap.find bname env.variable_map
+		with Not_found -> (get_next_global ())
+	in
+	let variable_map_new = StringMap.add bname vaddr env.variable_map in
+	let bindings_new = StringMap.add bname { loc = vaddr; size = size}
+			env.bindings in
+	{env with bindings = bindings_new; variable_map = variable_map_new}
+
 let get_var_address env vname =
 	try StringMap.find vname !env.variable_map;
 	with Not_found ->
 		env := add_variable !env vname;
 		StringMap.find vname !env.variable_map;;
+
+exception Bad_binding of string;;
+
+let get_binding_address env bname size =
+	let bind_info =
+	try StringMap.find bname !env.bindings;
+	with Not_found ->
+		env := add_binding !env bname size;
+		StringMap.find bname !env.bindings
+	in
+	if bind_info.size != size then
+		raise (Bad_binding "size mismatch")
+	else bind_info.loc;;
 
 let label_counter = ref 0;;
 let get_new_label () =
@@ -100,7 +122,7 @@ let rec translate_expr env expr =
 			Str vaddr
 		];;
 
-let translated_pattern expr end_label =
+let translated_pattern env expr end_label =
 	let rec check_item = function
 		  PatternByte(value) -> [
 				Rdb 1;
@@ -112,8 +134,11 @@ let translated_pattern expr end_label =
 			List.flatten (List.map check_item bytes)
 		| Binding(literal, bind_type) ->
 			let num_bytes = Ast.size_of_bind_type bind_type in
+			let vaddr = get_binding_address env literal num_bytes in
 			[
 				Rdb num_bytes;
+				Str vaddr;
+				Bne end_label
 				(* TODO: store bytes into a binding variable *)
 			]
 	in
@@ -130,7 +155,7 @@ let rec translate env stmt =
 	| Pattern(pat_expr, stmt) ->
 		let end_label = get_new_label () in
 		[ Ldp ] @
-		translated_pattern pat_expr end_label @
+		translated_pattern env pat_expr end_label @
 		recurse stmt @
 		[Label end_label; Skp]
 	| FunctionDecl(decl) ->

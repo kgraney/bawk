@@ -33,8 +33,8 @@ module StringMap : (* TODO: figure out how to get rid of this monstrosity! *)
 
 
 type pattern_binding = {
+    loc: int;
     size: int;
-    name: string;
 }
 
 type env = {
