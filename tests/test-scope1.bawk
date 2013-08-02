@@ -1,0 +1,15 @@
+
+a = 1000;
+b = 200;
+
+def foo() {
+	a = 10 + 100;
+	print(a);
+	print(b);
+}
+
+print(a);
+foo();
+print(a);
+print(b);
+
