@@ -1,0 +1,5 @@
+
+/89 foo2:int4/ { /* should match */
+	print(foo2); /* foo = 0x504e470d */
+}
+
