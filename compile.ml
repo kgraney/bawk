@@ -2,6 +2,7 @@ open Ast_types
 open Bytecode_types
 
 module StringMap = Map.Make(String)
+exception Compile_error of string;;
 
 type pattern_binding = {
 	loc: int;
@@ -12,6 +13,7 @@ type env = {
 	function_map: int StringMap.t; (* address for each defined function name *)
 	variable_map: int StringMap.t;
 	bindings: pattern_binding StringMap.t;
+	parent: env ref option;
 }
 
 let built_in_functions = ["print"];;
@@ -27,7 +29,23 @@ let clean_environment =
 		function_map = built_ins;
 		variable_map = StringMap.empty;
 		bindings = StringMap.empty;
+		parent = None;
 	}
+
+let new_environment parent_env =
+	ref {
+		function_map = StringMap.empty;
+		variable_map = StringMap.empty;
+		bindings = StringMap.empty;
+		parent = Some parent_env;
+	};;
+
+let rec resolve_function env fname =
+	try StringMap.find fname !env.function_map
+	with Not_found ->
+		match !env.parent with
+		  None -> raise (Compile_error "No such function")
+		| Some(env) -> resolve_function env fname;;
 
 let add_function env fname addr =
 	let function_map_new = StringMap.add fname addr env.function_map in
@@ -115,7 +133,7 @@ let rec translate_expr env expr =
 	| Binopt(e1, op, e2) ->
 		recurse e1 @ recurse e2 @ [Bin op]
 	| Call(func_name, args) ->
-		let function_addr = StringMap.find func_name !env.function_map in
+		let function_addr = resolve_function env func_name in
 		(List.concat (List.map recurse args)) @ [Jsr function_addr]
 	| Assign(var_name, expr) ->
 		let vaddr = get_var_address env var_name in
@@ -167,7 +185,7 @@ let rec translate env stmt =
 		let end_label = get_new_label () in
 		env := add_function !env decl.fname start_label;
 		[ Bra end_label; Label start_label ] @
-		recurse decl.body @
+		translate (new_environment env) decl.body @
 		[ Rts; Label end_label ];;
 
 let translate_program stmt =

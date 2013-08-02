@@ -41,6 +41,7 @@ type env = {
 	function_map: int StringMap.t; (* address for each defined function name *)
     variable_map: int StringMap.t;
     bindings: pattern_binding StringMap.t;
+    parent: env ref option;
 }
 
 (** [translate_program] takes an AST statement and returns a list of bytecode
