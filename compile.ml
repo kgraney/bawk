@@ -94,6 +94,7 @@ let resolve_labels instructions =
 		(* rewrite branches *)
 		| Bne(id)::t -> Bne label_map.(id) :: emit_resolution t
 		| Bra(id)::t -> Bra label_map.(id) :: emit_resolution t
+		| Beq(id)::t -> Beq label_map.(id) :: emit_resolution t
 		| Jsr(id)::t when id >= 0 -> Jsr label_map.(id) :: emit_resolution t
 
 		(* remove the pseudo instructions *)
