@@ -1,0 +1,12 @@
+a = 100;
+
+/89 foo:int1 4e47/ { /* should match */
+	print(foo);
+}
+
+/89504e47/ { /* should match */
+	print(20);
+}
+
+
+print(30);
