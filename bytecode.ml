@@ -43,11 +43,18 @@ let execute_instructions instructions on_file =
 			| Bin op ->
 				let op1 = stack.(sp - 2) and op2 = stack.(sp - 1) in
 				stack.(sp - 2) <- (
+					let boolean i = if i then 1 else 0 in
 					match op with
 						  Add -> op1 + op2
 						| Subtract -> op1 - op2
 						| Multiply -> op1 * op2
 						| Divide -> op1 / op2
+						| Equal -> boolean (op1 == op2)
+						| Neq -> boolean (op1 != op2)
+						| Less -> boolean (op1 < op2)
+						| Leq -> boolean (op1 <= op2)
+						| Greater -> boolean (op1 > op2)
+						| Geq -> boolean (op1 >= op2)
 				);
 				exec fp (sp - 1) (pc + 1)
 			| Jsr (-1) -> print_endline (string_of_int stack.(sp - 1));
