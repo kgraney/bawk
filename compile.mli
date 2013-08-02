@@ -33,15 +33,14 @@ module StringMap : (* TODO: figure out how to get rid of this monstrosity! *)
 
 
 type pattern_binding = {
-    loc: int;
-    size: int;
+	loc: int;
+	size: int;
 }
 
 type env = {
-	function_map: int StringMap.t; (* address for each defined function name *)
-    variable_map: int StringMap.t;
-    bindings: pattern_binding StringMap.t;
-    parent: env ref option;
+	symbol_map: int StringMap.t;
+	bindings: pattern_binding StringMap.t;
+	parent: env ref option;
 }
 
 (** [translate_program] takes an AST statement and returns a list of bytecode

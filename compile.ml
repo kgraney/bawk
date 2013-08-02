@@ -10,8 +10,7 @@ type pattern_binding = {
 }
 
 type env = {
-	function_map: int StringMap.t; (* address for each defined function name *)
-	variable_map: int StringMap.t;
+	symbol_map: int StringMap.t;
 	bindings: pattern_binding StringMap.t;
 	parent: env ref option;
 }
@@ -26,30 +25,29 @@ let clean_environment =
 		) StringMap.empty (Utile.enumerate ~step:(fun x y -> y - 1)
 				built_in_functions) in
 	{
-		function_map = built_ins;
-		variable_map = StringMap.empty;
+		symbol_map = built_ins;
 		bindings = StringMap.empty;
 		parent = None;
 	}
 
 let new_environment parent_env =
 	ref {
-		function_map = StringMap.empty;
-		variable_map = StringMap.empty;
+		symbol_map = StringMap.empty;
 		bindings = StringMap.empty;
 		parent = Some parent_env;
 	};;
 
-let rec resolve_function env fname =
-	try StringMap.find fname !env.function_map
+let rec resolve_symbol env name =
+	try StringMap.find name !env.symbol_map
 	with Not_found ->
 		match !env.parent with
-		  None -> raise (Compile_error "No such function")
-		| Some(env) -> resolve_function env fname;;
+		  None -> let error_msg = Printf.sprintf "No such symbol: %s" name in
+			raise (Compile_error error_msg)
+		| Some(env) -> resolve_symbol env name;;
 
 let add_function env fname addr =
-	let function_map_new = StringMap.add fname addr env.function_map in
-	{env with function_map = function_map_new}
+	let symbol_map_new = StringMap.add fname addr env.symbol_map in
+	{env with symbol_map = symbol_map_new}
 
 let global_counter = ref 0;;
 let get_next_global () =
@@ -57,24 +55,22 @@ let get_next_global () =
 	!global_counter;;
 
 let add_variable env vname =
-	let variable_map_new = StringMap.add vname (get_next_global ())
-			env.variable_map in
-	{env with variable_map = variable_map_new}
-
-let add_binding env bname size =
-	let vaddr = try StringMap.find bname env.variable_map
-		with Not_found -> (get_next_global ())
-	in
-	let variable_map_new = StringMap.add bname vaddr env.variable_map in
-	let bindings_new = StringMap.add bname { loc = vaddr; size = size}
-			env.bindings in
-	{env with bindings = bindings_new; variable_map = variable_map_new}
+	let symbol_map_new = StringMap.add vname (get_next_global ())
+			env.symbol_map in
+	{env with symbol_map = symbol_map_new}
 
 let get_var_address env vname =
-	try StringMap.find vname !env.variable_map;
+	try StringMap.find vname !env.symbol_map;
 	with Not_found ->
 		env := add_variable !env vname;
-		StringMap.find vname !env.variable_map;;
+		StringMap.find vname !env.symbol_map;;
+
+let add_binding env bname size =
+	let vaddr = get_var_address env bname in
+	(* let symbol_map_new = StringMap.add bname vaddr env.symbol_map in *)
+	let bindings_new = StringMap.add bname { loc = vaddr; size = size}
+			!env.bindings in
+	{!env with bindings = bindings_new}
 
 exception Bad_binding of string;;
 
@@ -82,7 +78,7 @@ let get_binding_address env bname size =
 	let bind_info =
 	try StringMap.find bname !env.bindings;
 	with Not_found ->
-		env := add_binding !env bname size;
+		env := add_binding env bname size;
 		StringMap.find bname !env.bindings
 	in
 	if bind_info.size != size then
@@ -128,12 +124,12 @@ let rec translate_expr env expr =
 	  LitInt(integer) ->
 		[Bytecode_types.Lit(integer)]
 	| ExprLiteral(var_name) ->
-		let vaddr = get_var_address env var_name in
+		let vaddr = resolve_symbol env var_name in
 		[ Lod vaddr ]
 	| Binopt(e1, op, e2) ->
 		recurse e1 @ recurse e2 @ [Bin op]
 	| Call(func_name, args) ->
-		let function_addr = resolve_function env func_name in
+		let function_addr = resolve_symbol env func_name in
 		(List.concat (List.map recurse args)) @ [Jsr function_addr]
 	| Assign(var_name, expr) ->
 		let vaddr = get_var_address env var_name in
@@ -176,9 +172,9 @@ let rec translate env stmt =
 		translate_expr env expr
 	| Pattern(pat_expr, stmt) ->
 		let end_label = get_new_label () in
-		[ Ldp ] @
-		translated_pattern env pat_expr end_label @
-		recurse stmt @
+		let pattern_code = translated_pattern env pat_expr end_label in
+		[ Ldp ] @ pattern_code @
+		translate env stmt @
 		[Label end_label; Skp]
 	| FunctionDecl(decl) ->
 		let start_label = get_new_label () in

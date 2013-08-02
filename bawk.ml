@@ -47,6 +47,6 @@ let _ =
 		(* Debug actions *)
 		| D_print_clean_env ->
 			let env = Compile.clean_environment in
-			Printf.printf "Built-in functions:\n";
+			Printf.printf "Starting symbol table:\n";
 			StringMap.iter (fun s i -> Printf.printf "\t%d %s\n" i s)
-					env.function_map;;
+					env.symbol_map;;
