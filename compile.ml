@@ -122,7 +122,7 @@ let rec translate_expr env expr =
 			Str vaddr
 		];;
 
-let translated_pattern env expr end_label =
+let rec translated_pattern env expr end_label =
 	let rec check_item = function
 		  PatternByte(value) -> [
 				Rdb 1;
@@ -140,6 +140,10 @@ let translated_pattern env expr end_label =
 				Str vaddr;
 				(* TODO: store bytes into a binding variable *)
 			]
+		| PatString(str) ->
+			let bytes = Utile.bytes_of_string str in
+			let ast_bytes = List.map (fun x -> PatternByte x) bytes in
+			translated_pattern env ast_bytes end_label @ [];
 	in
 	List.flatten (List.map check_item expr);;
 

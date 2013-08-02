@@ -13,3 +13,7 @@ val explode: string -> char list
 
 (** [implode] converts a list of characters into a string *)
 val implode: char list -> string
+
+(** [bytes_of_string] converts a string into a list of integers representing
+	the byte values for each character *)
+val bytes_of_string: string -> int list

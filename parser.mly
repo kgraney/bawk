@@ -34,6 +34,7 @@ pat_token:
 	| INT_LITERAL { parse_pattern_const $1 }
 	| LITERAL COLON BIND_TYPE { Ast_types.Binding($1, $3) }
 	| LITERAL { Ast_types.Literal($1) }
+	| STRING_LITERAL { Ast_types.PatString($1) }
 
 pat_expr:
 	rev_pat_expr { List.rev $1 }

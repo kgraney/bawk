@@ -25,6 +25,7 @@ type pat_token =
 	| PatternBytes of pat_token list
 	| Binding of literal * bind_type
 	| Literal of literal
+	| PatString of string
 
 type pat_expr = pat_token list
 

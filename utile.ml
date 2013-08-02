@@ -21,3 +21,6 @@ let implode l =
 	| c :: l -> res.[i] <- c; imp (i + 1) l in
 	imp 0 l;;
 
+let bytes_of_string str =
+	let chars = explode str in
+	List.map int_of_char chars;;
