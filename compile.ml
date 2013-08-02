@@ -138,7 +138,6 @@ let translated_pattern env expr end_label =
 			[
 				Rdb num_bytes;
 				Str vaddr;
-				Bne end_label
 				(* TODO: store bytes into a binding variable *)
 			]
 	in
