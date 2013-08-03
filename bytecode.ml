@@ -13,6 +13,8 @@ let string_of_instruction = function
 	| Bra(addr) -> sprintf "Bra %d" addr
 	| Beq(addr) -> sprintf "Beq %d" addr
 	| Bne(addr) -> sprintf "Bne %d" addr
+	| Beo(addr) -> sprintf "Beo %d" addr
+	| Drp -> "Drp"
 	| Ldp -> "Ldp"
 	| Skp -> "Skp"
 	| Hlt -> "Hlt"
@@ -78,6 +80,9 @@ let execute_instructions instructions on_file =
 				exec fp sp (pc + 1) else
 				exec fp (sp - 1) addr
 			| Bra addr -> exec fp sp addr
+			| Beo addr ->
+				if Reader.is_eof on_file then exec fp sp addr
+				else exec fp sp (pc + 1)
 			| Jsr addr ->
 				stack.(sp) <- pc + 1;
 				exec fp (sp + 1) addr
@@ -88,6 +93,8 @@ let execute_instructions instructions on_file =
 				exec fp (sp + 1) (pc + 1)
 			| Str index ->
 				globals.(index) <- stack.(sp - 1);
+				exec fp (sp - 1) (pc + 1)
+			| Drp ->
 				exec fp (sp - 1) (pc + 1)
 			| Hlt -> ()
 	in exec 0 0 0

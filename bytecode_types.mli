@@ -13,6 +13,7 @@ type instruction =
 	| Beq of int    (* Branch absolute if top-of-stack is zero *)
 	| Bne of int    (* Branch absolute if top-of-stack is non-zero *)
 	| Bra of int    (* Branch absolute *)
+	| Beo of int    (* Branch if end of file *)
 	| Hlt           (* Terminate *)
 	| Rdb of int    (* Read a number of bytes from the file *)
 	| Ldp           (* Load the position in the file onto the stack *)

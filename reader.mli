@@ -29,4 +29,6 @@ val set_pos: in_channel -> int -> unit
 
 val advance: in_channel -> int -> unit
 
-
+(** [is_eof] returns true if the next byte of the file reaches EOF and false
+	otherwise *)
+val is_eof: in_channel -> bool
