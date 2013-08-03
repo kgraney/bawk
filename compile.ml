@@ -15,7 +15,7 @@ type env = {
 	parent: env ref option;
 }
 
-let built_in_functions = ["print"];;
+let built_in_functions = ["print"; "RP"];;
 
 let clean_environment =
 	let built_ins =

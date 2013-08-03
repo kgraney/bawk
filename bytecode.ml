@@ -88,6 +88,9 @@ let execute_instructions instructions on_file =
 				exec fp (sp + 1) addr
 			| Rts ->
 				exec fp (sp - 1) stack.(sp - 1)
+			| Lod(-2) -> (* RP variable *)
+				stack.(sp) <- Reader.get_pos on_file;
+				exec fp (sp + 1) (pc + 1)
 			| Lod index ->
 				stack.(sp) <- globals.(index);
 				exec fp (sp + 1) (pc + 1)
