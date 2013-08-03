@@ -7,7 +7,7 @@ let string_of_instruction = function
 	| Bin(operator) -> "Bin " ^ Ast.string_of_operator operator
 	| Rdb(num) -> sprintf "Rdb %d" num
 	| Jsr(num) -> sprintf "Jsr %d" num
-	| Rts -> "Rts"
+	| Rts(num) -> sprintf "Rts %d" num
 	| Lod(num) -> sprintf "Lod %d" num
 	| Str(num) -> sprintf "Str %d" num
 	| Bra(addr) -> sprintf "Bra %d" addr
@@ -17,6 +17,9 @@ let string_of_instruction = function
 	| Drp -> "Drp"
 	| Ldp -> "Ldp"
 	| Skp -> "Skp"
+	| Lfp -> "Lfp"
+	| Sfp -> "Sfp"
+	| Ent -> "Ent"
 	| Hlt -> "Hlt"
 
 	| Label(id) -> sprintf "Label %d (PSEUDO)" id
@@ -39,8 +42,9 @@ let execute_instructions instructions on_file =
 	let stack = Array.make 1024 0 in
 	let globals = Array.make 1024 0 in
 	let rec exec fp sp pc =
-		(* print_endline (string_of_instruction (instructions.(pc))); *)
-		(* Printf.printf "Stack size: %d\n" sp; *)
+		(* Printf.printf "(fp=%d sp=%d pc=%d) " fp sp pc;
+				Array.iter (fun d -> Printf.printf "%d " d) stack;
+		Printf.printf "\n"; *)
 		match instructions.(pc) with
 			  Lit i -> stack.(sp) <- i;
 				exec fp (sp + 1) (pc + 1)
@@ -88,17 +92,30 @@ let execute_instructions instructions on_file =
 			| Jsr addr ->
 				stack.(sp) <- pc + 1;
 				exec fp (sp + 1) addr
-			| Rts ->
-				exec fp (sp - 1) stack.(sp - 1)
+			| Rts(num) ->
+				(* Printf.printf "\nReturn to %d from %d (fp=%d, num=%d, sp=%d)\n" stack.(fp - 1) (fp - 1) stack.(sp - 1) num sp; *)
+				exec stack.(fp) (fp - num) stack.(fp - 1)
 			| Lod(-2) -> (* RP variable *)
 				stack.(sp) <- Reader.get_pos on_file;
 				exec fp (sp + 1) (pc + 1)
 			| Lod index ->
-				stack.(sp) <- globals.(index);
+				(
+					if (index > 0) then stack.(sp) <- globals.(index)
+					else stack.(sp) <- stack.(fp + index + 100 - 2)
+				);
 				exec fp (sp + 1) (pc + 1)
+
 			| Str index ->
-				globals.(index) <- stack.(sp - 1);
+				(
+					if (index > 0) then globals.(index) <- stack.(sp - 1)
+					else stack.(fp + index + 100 - 2) <- stack.(sp - 1)
+				);
 				exec fp (sp - 1) (pc + 1)
+			| Ent ->
+				stack.(sp) <- fp;
+				exec sp (sp + 1) (pc + 1)
+			| Lfp ->
+				exec stack.(sp) (sp - 1) (pc + 1)
 			| Drp ->
 				exec fp (sp - 1) (pc + 1)
 			| Hlt -> ()

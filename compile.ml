@@ -54,6 +54,11 @@ let get_next_global () =
 	global_counter := !global_counter + 1;
 	!global_counter;;
 
+let add_variable_force env vname id =
+	let symbol_map_new = StringMap.add vname id
+			env.symbol_map in
+	{env with symbol_map = symbol_map_new}
+
 let add_variable env vname =
 	let symbol_map_new = StringMap.add vname (get_next_global ())
 			env.symbol_map in
@@ -196,10 +201,18 @@ let rec translate env stmt =
 	| FunctionDecl(decl) ->
 		let start_label = get_new_label () in
 		let end_label = get_new_label () in
+		let num_args = List.length decl.arguments in
+		let new_env = new_environment env in
+		List.iter (fun x ->
+			let (id,name) = x in
+			new_env := add_variable_force !new_env name id;
+			();
+		) (Utile.enumerate ~step:(fun x y -> y - 1) ~start:(-100)
+				(List.rev decl.arguments));
 		env := add_function !env decl.fname start_label;
-		[ Bra end_label; Label start_label ] @
-		translate (new_environment env) decl.body @
-		[ Rts; Label end_label ];;
+		[ Bra end_label; Label start_label; Ent; ] @
+		translate new_env decl.body @
+		[ Rts num_args; Label end_label ];;
 
 let translate_program stmt =
 	let env = ref clean_environment in
