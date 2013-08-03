@@ -39,6 +39,8 @@ let execute_instructions instructions on_file =
 	let stack = Array.make 1024 0 in
 	let globals = Array.make 1024 0 in
 	let rec exec fp sp pc =
+		(* print_endline (string_of_instruction (instructions.(pc))); *)
+		(* Printf.printf "Stack size: %d\n" sp; *)
 		match instructions.(pc) with
 			  Lit i -> stack.(sp) <- i;
 				exec fp (sp + 1) (pc + 1)
@@ -70,14 +72,14 @@ let execute_instructions instructions on_file =
 				exec fp (sp + 1) (pc + 1)
 			| Ldp ->
 				stack.(sp) <- Reader.get_pos on_file;
-				(* Printf.printf "Store position: %d\n" stack.(sp); *)
+				(* Printf.printf "Store position: %d at %d\n" stack.(sp) sp; *)
 				exec fp (sp + 1) (pc + 1)
 			| Skp ->
 				Reader.set_pos on_file stack.(sp - 1);
 				(* Printf.printf "Set position: %d\n" stack.(sp - 1); *)
 				exec fp (sp - 1) (pc + 1)
 			| Bne addr -> if stack.(sp - 1) == 0 then
-				exec fp sp (pc + 1) else
+				exec fp (sp - 1) (pc + 1) else
 				exec fp (sp - 1) addr
 			| Bra addr -> exec fp sp addr
 			| Beo addr ->

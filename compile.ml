@@ -138,13 +138,13 @@ let rec translate_expr env expr =
 			Str vaddr
 		];;
 
-let rec translated_pattern env expr end_label =
+let rec translated_pattern env expr fail_label =
 	let rec check_item = function
 		  PatternByte(value) -> [
 				Rdb 1;
 				Lit value;
 				Bin Subtract;
-				Bne end_label (* branch to failed match *)
+				Bne fail_label (* branch to failed match *)
 			]
 		| PatternBytes(bytes) ->
 			List.flatten (List.map check_item bytes)
@@ -152,6 +152,7 @@ let rec translated_pattern env expr end_label =
 			let num_bytes = Ast.size_of_bind_type bind_type in
 			let vaddr = get_binding_address env literal num_bytes in
 			[
+				(* TODO: handle EOF here? *)
 				Rdb num_bytes;
 				Str vaddr;
 				(* TODO: store bytes into a binding variable *)
@@ -159,7 +160,7 @@ let rec translated_pattern env expr end_label =
 		| PatString(str) ->
 			let bytes = Utile.bytes_of_string str in
 			let ast_bytes = List.map (fun x -> PatternByte x) bytes in
-			translated_pattern env ast_bytes end_label @ [];
+			translated_pattern env ast_bytes fail_label @ [];
 	in
 	List.flatten (List.map check_item expr);;
 
@@ -172,11 +173,26 @@ let rec translate env stmt =
 	| Expr(expr) ->
 		translate_expr env expr
 	| Pattern(pat_expr, stmt) ->
+		let start_label = get_new_label () in
+		let fail_label = get_new_label () in
 		let end_label = get_new_label () in
-		let pattern_code = translated_pattern env pat_expr end_label in
-		[ Ldp ] @ pattern_code @
-		translate env stmt @
-		[Label end_label; Skp]
+
+		let new_env = new_environment env in
+
+		let pattern_code = translated_pattern new_env pat_expr fail_label in
+		[ Ldp; Label start_label; Ldp; Beo end_label; ] @ pattern_code @
+		translate new_env stmt @
+		[
+			Bra end_label;
+			Label fail_label;
+			Skp;
+			Beo end_label;
+			Rdb 1; Drp;
+			Bra start_label;
+			Label end_label;
+			Skp;
+			Skp;
+		]
 	| FunctionDecl(decl) ->
 		let start_label = get_new_label () in
 		let end_label = get_new_label () in

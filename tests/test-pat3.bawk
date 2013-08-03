@@ -2,7 +2,7 @@
 	print(10);
 }
 
-/8951/ { /* should not match */
+/8951123456789/ { /* should not match */
 	print(20);
 }
 
