@@ -34,7 +34,7 @@ parser.ml parser.mli: parser.mly
 clean:
 	rm -f bawk *.cmi *.cmo scanner.ml parser.ml parser.mli
 	rm -f design_docs/*.html design_docs/*.css
-	rm -f plt_docs/*.pdf plt_docs/*.toc plt_docs/*.aux plt_docs/*.log
+	rm -f plt_docs/*.pdf plt_docs/*.toc plt_docs/*.aux plt_docs/*.log plt_docs/*.lol
 	rm -f $(DEP_FILENAME)
 
 design_docs: bawk

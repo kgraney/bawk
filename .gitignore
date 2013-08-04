@@ -12,6 +12,7 @@ plt_docs/*.dvi
 plt_docs/*.ps
 plt_docs/*.toc
 plt_docs/*.out
+plt_docs/*.lol
 
 scanner.ml
 parser.ml
