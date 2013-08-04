@@ -1,0 +1,23 @@
+
+/* these values should be different */
+
+/000a value:int4/  { print(value); }
+/000a value:uint4/ { print(value); }
+
+/000a value:int2/ { print (value); }
+/000a value:uint2/ { print (value); }
+
+/000a value:int1/ { print (value); }
+/000a value:uint1/ { print (value); }
+
+
+/* these values should be the same */
+
+/000d value:int4/  { print(value); }
+/000d value:uint4/ { print(value); }
+
+/000d value:int2/  { print(value); }
+/000d value:uint2/ { print(value); }
+
+/000d value:int1/  { print(value); }
+/000d value:uint1/ { print(value); }
