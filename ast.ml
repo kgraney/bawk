@@ -38,6 +38,13 @@ let string_of_bind_type = function
 	| UInt_2_bytes -> "uint2"
 	| UInt_4_bytes -> "uint4"
 
+let is_signed_type = function
+	| Int_1_byte -> true
+	| Int_2_bytes -> true
+	| Int_4_bytes -> true
+	| UInt_2_bytes -> false
+	| UInt_4_bytes -> false
+
 let string_of_operator = function
 	| Add -> "Add"
 	| Subtract -> "Sub"

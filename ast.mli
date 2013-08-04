@@ -11,6 +11,10 @@ val string_of_bind_type: Ast_types.bind_type -> string
 	*)
 val size_of_bind_type: Ast_types.bind_type -> int
 
+(** [is_signed_type] returns true if the bind type is signed and false
+	otherwise *)
+val is_signed_type: Ast_types.bind_type -> bool
+
 (** [make_terminal] creates a terminal node for the node with an id of [this],
 	and labels it with the string argument.  If the optional [parent] argument
 	is provided a link is also created between this node and the parent. *)
