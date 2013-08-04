@@ -106,7 +106,7 @@ and comment = parse
 and string = parse
     '"'
       { () }
-  | '\\' newline ([' ' '\t'] * as space)
+  | '\\' newline ([' ' '\t'])
       { string lexbuf }
   | '\\' ['\\' '\'' '"' 'n' 't' 'b' 'r' ' ']
       { store_string_char(char_for_backslash(Lexing.lexeme_char lexbuf 1));
