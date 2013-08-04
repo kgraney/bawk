@@ -81,9 +81,9 @@ let print_tree prog =
 					~parent:parent;
 			consumed_ids
 
-		| _ ->
+		(* | _ ->
 			make_nonterminal "other_stmt" ~this:id ~parent:parent;
-			id + 1
+			id + 1 *)
 
 	and expr_print expr id parent =
 		match expr with
@@ -136,6 +136,9 @@ let print_tree prog =
 			List.fold_left (folded_printer pat_token_print id) id values
 		| PatternByte(value) ->
 			make_terminal (string_of_int value) ~this:id ~parent:parent;
+			id + 1
+		| PatString(str) ->
+			make_terminal (sprintf "'%s'" str) ~this:id ~parent:parent;
 			id + 1
 		(*| _ ->
 			make_nonterminal "foo" ~this:(id+1) ~parent:id;
