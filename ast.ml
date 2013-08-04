@@ -28,6 +28,7 @@ let size_of_bind_type = function
 	| Int_1_byte -> 1
 	| Int_2_bytes -> 2
 	| Int_4_bytes -> 4
+	| UInt_1_byte -> 1
 	| UInt_2_bytes -> 2
 	| UInt_4_bytes -> 4
 
@@ -35,6 +36,7 @@ let string_of_bind_type = function
 	| Int_1_byte -> "int1"
 	| Int_2_bytes -> "int2"
 	| Int_4_bytes -> "int4"
+	| UInt_1_byte -> "uint1"
 	| UInt_2_bytes -> "uint2"
 	| UInt_4_bytes -> "uint4"
 
@@ -42,6 +44,7 @@ let is_signed_type = function
 	| Int_1_byte -> true
 	| Int_2_bytes -> true
 	| Int_4_bytes -> true
+	| UInt_1_byte -> false
 	| UInt_2_bytes -> false
 	| UInt_4_bytes -> false
 

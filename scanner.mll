@@ -77,6 +77,7 @@ rule token = parse
 	| "int1" { BIND_TYPE(Ast_types.Int_1_byte) }
 	| "int2" { BIND_TYPE(Ast_types.Int_2_bytes) }
 	| "int4" { BIND_TYPE(Ast_types.Int_4_bytes) }
+	| "uint1" { BIND_TYPE(Ast_types.UInt_1_byte) }
 	| "uint2" { BIND_TYPE(Ast_types.UInt_2_bytes) }
 	| "uint4" { BIND_TYPE(Ast_types.UInt_4_bytes) }
 

@@ -7,6 +7,7 @@ type bind_type =
 	| Int_1_byte
 	| Int_2_bytes
 	| Int_4_bytes
+	| UInt_1_byte
 	| UInt_2_bytes
 	| UInt_4_bytes
 
