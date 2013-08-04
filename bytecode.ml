@@ -5,6 +5,7 @@ open Ast_types
 let string_of_instruction = function
 	  Lit(integer) -> sprintf "Lit %d" integer
 	| Bin(operator) -> "Bin " ^ Ast.string_of_operator operator
+	| Two(num) -> sprintf "Two %d" num
 	| Rdb(num) -> sprintf "Rdb %d" num
 	| Jsr(num) -> sprintf "Jsr %d" num
 	| Rts(num) -> sprintf "Rts %d" num
@@ -65,7 +66,14 @@ let execute_instructions instructions on_file =
 						| Geq -> boolean (op1 >= op2)
 				);
 				exec fp (sp - 1) (pc + 1)
-			| Jsr (-1) -> print_endline (string_of_int stack.(sp - 1));
+			| Two size ->
+				let operand = stack.(sp - 1) in
+				stack.(sp - 1) <- (
+					Utile.signed_of_unsigned operand size
+				);
+				exec fp sp (pc + 1)
+			| Jsr (-1) -> (* print function *)
+				print_endline (string_of_int stack.(sp - 1));
 				exec fp (sp - 1) (pc + 1)
 			| Rdb (1) ->
 				stack.(sp) <- Reader.read_byte on_file;

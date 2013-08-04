@@ -18,3 +18,7 @@ val implode: char list -> string
 (** [bytes_of_string] converts a string into a list of integers representing
 	the byte values for each character *)
 val bytes_of_string: string -> int list
+
+(** [signed_of_unsigned] converts an integer into its twos' complement
+	interpretation *)
+val signed_of_unsigned: int -> int -> int

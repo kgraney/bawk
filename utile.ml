@@ -24,3 +24,9 @@ let implode l =
 let bytes_of_string str =
 	let chars = explode str in
 	List.map int_of_char chars;;
+
+let signed_of_unsigned value num_bits =
+	let shift = num_bits - 1 in
+	let mask = 1 lsl shift in
+	if mask land value > 0 then (value land (lnot mask)) - mask
+	else value;;

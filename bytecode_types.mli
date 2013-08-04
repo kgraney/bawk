@@ -3,6 +3,7 @@ type instruction =
 	  Lit of int    (* Push a literal *)
 	| Drp           (* Discard a value *)
 	| Bin of Ast_types.operators (* Perform arithmetic on top of stack *)
+	| Two of int    (* Convert top of stack to two's complement *)
 	| Lod of int    (* Fetch global variable *)
 	| Str of int    (* Store global variable *)
 	| Lfp           (* Load frame pointer from the stack *)
