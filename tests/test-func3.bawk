@@ -1,0 +1,20 @@
+
+a = 100;
+
+def bar(c) {
+	print(c);
+}
+
+def foo(a, b, c) {
+	print (a);
+	print (b);
+	print (c);
+	a = 10;
+	bar(c * 2);
+	print(a);
+	print(c);
+	c = c * 2;
+	print(c);
+}
+
+foo(50+20, 10, a);
