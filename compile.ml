@@ -159,9 +159,12 @@ let rec translated_pattern env expr fail_label =
 			[
 				(* TODO: handle EOF here? *)
 				Rdb num_bytes;
-				Str vaddr;
-				(* TODO: store bytes into a binding variable *)
 			]
+			@ (
+				if Ast.is_signed_type bind_type then [Two (num_bytes * 8);]
+				else []
+			)
+			@ [ Str vaddr; ]
 		| PatString(str) ->
 			let bytes = Utile.bytes_of_string str in
 			let ast_bytes = List.map (fun x -> PatternByte x) bytes in
