@@ -1,10 +1,8 @@
 /* print the size of a PNG file */
 
-/* TODO: change to uint4 types for bindings once int is correctly supported */
-
 /89 "PNG" 0d 0a 1a 0a/ {
-   /length:int4 "IHDR"/ {
-      /width:int4 height:int4/ {
+   /length:uint4 "IHDR"/ {
+      /width:uint4 height:uint4/ {
         print(width);
         print(height);
       }
