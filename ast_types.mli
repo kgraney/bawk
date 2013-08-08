@@ -40,3 +40,4 @@ and statement =
 	| Block of statement list
 	| Expr of expr
 	| FunctionDecl of func_decl
+	| If of expr * statement * statement

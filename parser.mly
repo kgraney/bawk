@@ -5,7 +5,7 @@ open Parser_help
 %token <Ast_types.bind_type> BIND_TYPE
 
 /* punctuation */
-%token COLON SEMICOLON COMMA FSLASH RBRACE LBRACE RPAREN LPAREN DEF
+%token COLON SEMICOLON COMMA FSLASH RBRACE LBRACE RPAREN LPAREN DEF IF ELSE
 
 /* operators */
 %token PLUS MINUS TIMES ASSIGN
@@ -19,6 +19,8 @@ open Parser_help
 %token EOF
 
 /* associativity and precedence */
+%nonassoc NOELSE
+%nonassoc ELSE
 %right ASSIGN
 %left EQ NEQ
 %left LT GT LEQ GEQ
@@ -53,6 +55,10 @@ statement:
 			Ast_types.arguments = $4;
 			Ast_types.body = Ast_types.Block($7)})
 		}
+	| IF LPAREN expr RPAREN statement %prec NOELSE
+		{ Ast_types.If($3, $5, Ast_types.Block([])) }
+	| IF LPAREN expr RPAREN statement ELSE statement
+		{ Ast_types.If($3, $5, $7) }
 
 expr:
 	| INT_LITERAL { Ast_types.LitInt(int_of_string $1) }

@@ -141,9 +141,9 @@ let rec translate_expr env expr =
 		let vaddr = get_var_address env var_name in
 		translate_expr env expr @ [
 			Str vaddr
-		];;
+		]
 
-let rec translated_pattern env expr fail_label =
+and translated_pattern env expr fail_label =
 	let rec check_item = function
 		  PatternByte(value) -> [
 				Rdb 1;
@@ -170,10 +170,9 @@ let rec translated_pattern env expr fail_label =
 			let ast_bytes = List.map (fun x -> PatternByte x) bytes in
 			translated_pattern env ast_bytes fail_label @ [];
 	in
-	List.flatten (List.map check_item expr);;
+	List.flatten (List.map check_item expr)
 
-
-let rec translate env stmt =
+and translate env stmt =
 	let recurse = translate env in
 	match stmt with
 	  Block(stmt_list) ->
@@ -215,7 +214,14 @@ let rec translate env stmt =
 		env := add_function !env decl.fname start_label;
 		[ Bra end_label; Label start_label; Ent; ] @
 		translate new_env decl.body @
-		[ Rts num_args; Label end_label ];;
+		[ Rts num_args; Label end_label ]
+	| If(condition, ifstmt, elsestmt) ->
+		let if_label = get_new_label () in
+		let end_label = get_new_label () in
+		translate_expr env condition
+		@ [ Bne if_label; ] @ translate env elsestmt
+		@ [ Bra end_label; Label if_label; ]
+		@ translate env ifstmt @ [ Label end_label; ];;
 
 let translate_program stmt =
 	let env = ref clean_environment in
