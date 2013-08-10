@@ -93,6 +93,9 @@ let execute_instructions instructions on_file =
 			| Bne addr -> if stack.(sp - 1) == 0 then
 				exec fp (sp - 1) (pc + 1) else
 				exec fp (sp - 1) addr
+			| Beq addr -> if stack.(sp - 1) != 0 then
+				exec fp (sp - 1) (pc + 1) else
+				exec fp (sp - 1) addr
 			| Bra addr -> exec fp sp addr
 			| Beo addr ->
 				if Reader.is_eof on_file then exec fp sp addr
