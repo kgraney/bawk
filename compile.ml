@@ -64,11 +64,13 @@ let add_variable env vname =
 			env.symbol_map in
 	{env with symbol_map = symbol_map_new}
 
-let get_var_address env vname =
+let rec get_var_address env vname =
 	try StringMap.find vname !env.symbol_map;
 	with Not_found ->
-		env := add_variable !env vname;
-		StringMap.find vname !env.symbol_map;;
+		match !env.parent with
+			  None -> env := add_variable !env vname;
+				StringMap.find vname !env.symbol_map
+			| Some(env) -> get_var_address env vname;;
 
 let add_binding env bname size =
 	let vaddr = get_var_address env bname in
