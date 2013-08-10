@@ -156,6 +156,10 @@ let rec translate_expr env expr =
 		translate_expr env expr @ [
 			Str vaddr
 		]
+	| LitString(str) ->
+		let error_msg = Printf.sprintf "Invalid use of string literal: %s" str
+		in raise (Compile_error error_msg)
+		[]
 
 and translated_pattern env expr fail_label =
 	let rec check_item = function
