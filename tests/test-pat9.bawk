@@ -1,0 +1,36 @@
+/* LE defaults to false (0) */
+
+/ 091938af / {
+	print(100);
+	print(RP);
+}
+
+LE = 1;
+
+/ af381909 / {
+	print(200);
+	print(RP);
+}
+
+/ 09 19 38 af / {
+	print(300);
+	print(RP);
+}
+
+/ af 38 19 09 / {
+	print(401);
+	print(RP);
+}
+
+LE = 0;
+
+/ 091938af / {
+	print(500);
+	print(RP);
+}
+
+
+/ 09 19 38 af / {
+	print(600);
+	print(RP);
+}
