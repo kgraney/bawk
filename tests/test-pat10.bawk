@@ -1,0 +1,13 @@
+
+LE = 0;
+/ "IHDR" / {
+	print(100);
+	print(RP);
+}
+
+LE = 1;
+/ "IHDR" / {
+	print(200);
+	print(RP);
+}
+
