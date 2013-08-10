@@ -113,6 +113,9 @@ let execute_instructions instructions on_file =
 				);
 				exec fp (sp + 1) (pc + 1)
 
+			| Str(-2) -> (* RP variable *)
+				Reader.set_pos on_file stack.(sp);
+				exec fp (sp - 1) (pc + 1)
 			| Str index ->
 				(
 					if (index > 0) then globals.(index) <- stack.(sp - 1)
