@@ -166,7 +166,18 @@ and translated_pattern env expr fail_label =
 				Bne fail_label (* branch to failed match *)
 			]
 		| PatternBytes(bytes) ->
-			List.flatten (List.map check_item bytes)
+			let big_endian = List.flatten (List.map check_item bytes) in
+			let little_endian = List.flatten (List.map check_item (List.rev bytes)) in
+			let le_label = get_new_label () in
+			let end_label = get_new_label () in
+			[
+				Lod 0; (* Load LE *)
+				Bne le_label;
+			]
+			@ big_endian
+			@ [ Bra end_label; Label le_label; ]
+			@ little_endian
+			@ [ Label end_label; ]
 		| Binding(literal, bind_type) ->
 			let num_bytes = Ast.size_of_bind_type bind_type in
 			let vaddr = get_binding_address env literal num_bytes in
