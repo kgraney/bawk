@@ -16,14 +16,18 @@ type env = {
 }
 
 let built_in_functions = ["print"; "RP"];;
+let special_vars = ["LE"];;
 
 let clean_environment =
+	let preset_binding_list =
+			(Utile.enumerate ~step:(fun x y -> y - 1) ~start:(-1)
+				built_in_functions)
+			@ Utile.enumerate special_vars in
 	let built_ins =
 		List.fold_left (fun map item ->
 			let (value, key) = item in
-			StringMap.add key (value - 1) map
-		) StringMap.empty (Utile.enumerate ~step:(fun x y -> y - 1)
-				built_in_functions) in
+			StringMap.add key (value) map
+		) StringMap.empty preset_binding_list in
 	{
 		symbol_map = built_ins;
 		bindings = StringMap.empty;
@@ -49,7 +53,7 @@ let add_function env fname addr =
 	let symbol_map_new = StringMap.add fname addr env.symbol_map in
 	{env with symbol_map = symbol_map_new}
 
-let global_counter = ref 0;;
+let global_counter = ref (List.length special_vars);;
 let get_next_global () =
 	global_counter := !global_counter + 1;
 	!global_counter;;
