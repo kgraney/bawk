@@ -90,6 +90,12 @@ let print_tree prog =
 			make_nonterminal (sprintf "fdef:%s" decl.fname) ~this:id
 					~parent:parent;
 			consumed_ids
+		| If(cond, stmt1, stmt2) ->
+			let if_id = expr_print cond (id + 1) id in
+			let ifstmt = stmt_print stmt1 if_id id in
+			let consumed_ids = stmt_print stmt2 ifstmt id in
+			make_nonterminal "if" ~this:id ~parent:parent;
+			consumed_ids
 
 		(* | _ ->
 			make_nonterminal "other_stmt" ~this:id ~parent:parent;
