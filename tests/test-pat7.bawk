@@ -1,0 +1,16 @@
+
+my_RP = RP;
+print(my_RP);
+
+/ foo:int1 19 38af / {
+	print(foo);
+	my_RP = RP;
+	print(my_RP);
+}
+
+print(my_RP);
+RP = my_RP;
+
+/ foo:int1 00 / {
+	print(foo);
+}
