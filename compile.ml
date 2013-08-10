@@ -49,6 +49,14 @@ let rec resolve_symbol env name =
 			raise (Compile_error error_msg)
 		| Some(env) -> resolve_symbol env name;;
 
+let rec resolve_binding env name =
+	try StringMap.find name !env.bindings
+	with Not_found ->
+		match !env.parent with
+		  None -> let error_msg = Printf.sprintf "No such symbol: %s" name in
+			raise (Compile_error error_msg)
+		| Some(env) -> resolve_binding env name;;
+
 let add_function env fname addr =
 	let symbol_map_new = StringMap.add fname addr env.symbol_map in
 	{env with symbol_map = symbol_map_new}
@@ -175,6 +183,16 @@ and translated_pattern env expr fail_label =
 			let bytes = Utile.bytes_of_string str in
 			let ast_bytes = List.map (fun x -> PatternByte x) bytes in
 			translated_pattern env ast_bytes fail_label @ [];
+		| Literal(symbol) ->
+			let register = resolve_symbol env symbol in
+			let binding = resolve_binding env symbol in
+			let size = binding.size in
+			[
+				Lod register;
+				Rdb size;
+				Bin Subtract;
+				Bne fail_label
+			]
 	in
 	List.flatten (List.map check_item expr)
 

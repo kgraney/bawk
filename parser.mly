@@ -35,7 +35,13 @@ open Parser_help
 pat_token:
 	| INT_LITERAL { parse_pattern_const $1 }
 	| LITERAL COLON BIND_TYPE { Ast_types.Binding($1, $3) }
-	| LITERAL { Ast_types.Literal($1) }
+	| LITERAL {
+		(* Resolve a little ambiguity from the scanning phase, basically
+		   binding variables can't be valid hex numbers or we don't know if it's
+		   a hex number or a variable.  Here it's resolved to be a number. *)
+		try parse_pattern_const $1
+		with Failure(_) -> Ast_types.Literal($1)
+		}
 	| STRING_LITERAL { Ast_types.PatString($1) }
 
 pat_expr:

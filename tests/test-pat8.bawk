@@ -1,0 +1,10 @@
+
+/4e47 value:int1/ {
+	print(value);
+	print(RP);
+	/value value2:int2/ {
+		print(value2);
+		print(RP);
+	}
+}
+
