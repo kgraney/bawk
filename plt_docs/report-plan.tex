@@ -1,10 +1,21 @@
-The plan for this project was to 
+The plan for this project was:
 
-Determine objectives of the language
-Design the language syntax
-	Write the scanner/parser
-	Design the AST types
-Write the logic to output the AST to GraphViz
+\begin{enumerate}
+\item \textsl{Determine objectives of the language} -- the language was designed to be useful for extracting data quickly from binary files.  It was modelled after an awk-style syntax, but was constrained to be simple enough to implement in a single semester.
 
-Design the bytecode
-Implement the translation logic
+\item \textsl{Design the language syntax} -- the language syntax was modelled after awk and the microc language, and the concept was tested in parallel with writing a parser for it.
+\begin{enumerate}
+	\item \textsl{Write the scanner/parser} -- This was critical to working through details of the language in parallel with designing it.
+	\item \textsl{Design the AST types} -- The AST types were designed to be as simple as possible, so that the translation to bytecode could be done easily.
+\end{enumerate}
+
+\item \textsl{Write the logic to output the AST to GraphViz} -- This was done mostly to help debug the AST structure, but also to make sure the AST was easy enough to traverse before attempting the bytecode translation.  Translating the AST to GraphViz code enabled the creation of a visualization that could be generated for different inputs to make sure very early on that things like operator precedence were working correctly.
+
+\item \textsl{Design the bytecode} -- The plan was to take the bytecode from microc and add some basic instructions specific to the reading of binary files, such as an instruction to read a given number of bytes, branch conditionally on reaching end-of-file, etc.  The stack-style design of the microc bytecode made it easier to implement than a register-based bytecode.  One change I did intend to make was switching from relative branching to absolute branching.
+
+\item \textsl{Implement the translation logic} -- The translation logic would hopefully be a straightforward step once the previous were completed.  The plan was to implement translation from AST structures into basic blocks, and implement the necessary bytecode instructions in parallel, while testing along the way.
+
+\item \textsl{Project report} -- The project report would be completed for required intermediate deadlines, with the remainder written after finishing the bulk of the coding.
+
+\item \textsl{Test} -- Finally, a conclusive round of testing would be done to ensure the language has no glarring bugs.  Inefficiency and minor non-fatal flaws would be tolerated.
+\end{enumerate}

@@ -14,7 +14,7 @@ An identifier is a sequence of uppercase and lowercase letters A--Z, the numeral
 \end{grammar}
 
 \subsection{Keywords}
-The following identifiers are reserved for use as keywords, and may not be used otherwise: \texttt{if}, \texttt{else}, \texttt{return}, \texttt{def}, \texttt{int1}, \texttt{int2}, \texttt{int4}, \texttt{uint1}, \texttt{uint2}, \texttt{uint4}.
+The following identifiers are reserved for use as keywords, and should not be used otherwise: \texttt{if}, \texttt{else}, \texttt{return}, \texttt{def}, \texttt{int1}, \texttt{int2}, \texttt{int4}, \texttt{uint1}, \texttt{uint2}, \texttt{uint4}.
 
 \subsection{Constants}
 \label{sec:constants}
@@ -32,7 +32,7 @@ Previously unused identifiers become function names once a function is declared 
 
 \subsection{Variable Name}
 \label{sec:variables}
-Previously unused identifiers become variable names once an assignment expression (see \S\ref{sec:assignment}) executes with the identifier on the left hand side.
+Previously unused identifiers become variable names once an assignment expression (see \S\ref{sec:assignment}) executes with the new identifier on the left hand side.  Variables have scope where they are first created in this way.  Scoping is dynamic.
 
 \subsection{Pattern Binding Variable Name}
 \label{sec:bind-variables}
@@ -44,7 +44,6 @@ There are certain special identifiers that behave like variables, but whose mean
 \begin{itemize}
 \item \texttt{RP} -- The \textsl{file pointer} variable  indicates where in the file pattern statements begin matching (see \S\ref{sec:pattern-statement}).  The value contains the number of bytes from the beginning of the file.  At the start of the bawk program this value defaults to $0$.
 \item \texttt{LE} -- Force \textsl{little-endian} interpretation of integers and strings while pattern matching in the file.  A value of $0$ indicates big-endian interpretation and a value of $1$ indicates little-endian interpretation.  The default value is $0$.
-\item \texttt{\_} -- The \texttt{trash} variable is a write-only identifier that cannot be read.  It is useful for binding don't-care values in pattern matching expressions.
 \end{itemize}
 
 \section{Statements}
