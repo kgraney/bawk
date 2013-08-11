@@ -171,7 +171,8 @@ and translated_pattern env expr fail_label =
 			]
 		| PatternBytes(bytes) ->
 			let big_endian = List.flatten (List.map check_item bytes) in
-			let little_endian = List.flatten (List.map check_item (List.rev bytes)) in
+			let little_endian = List.flatten
+					(List.map check_item (List.rev bytes)) in
 			let le_label = get_new_label () in
 			let end_label = get_new_label () in
 			[
