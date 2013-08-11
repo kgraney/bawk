@@ -43,8 +43,11 @@ The program counter is simply an index into the \texttt{instructions} array for 
 
 The stack grows from an index of zero in the \texttt{stack} array upwards, with items pushed and popped as individual instructions are executed.  The argument to \texttt{exec} is a pointer to where the next value can be pushed on the stack.  The stack only holds integer values, which is the primary motivation for not supporting functions, such as a \texttt{printf}-like function, that take string arguments.
 
-Function arguments are placed on the stack, and the frame pointer references the location of these arguments.  The previous frame pointer is also placed onto the stack and reset when the function returns, allowing recursion with arguments to work properly.
+Function arguments are placed on the stack, and the frame pointer references the location of these arguments.  The previous frame pointer is also placed onto the stack and reset when the function returns, allowing nested function calls with arguments to work properly.
 
 Global variables are stored in the \texttt{globals} array, with each symbol, other than function arguments, assigned an offset into this array.  The name `globals' is a bit of a misnomer, since variables local to blocks or functions are also stored in this same array.  The slots in the \texttt{globals} array are not re-used; they last the entire duration of the program and are statically assigned to symbols by the compiler.
 
 The bytecode interpreter \texttt{stack} is limited to 1024 values, and the \texttt{globals} array is limited to this same size of 1024 values.  These limits are \emph{not} enforced by the compiler, but the bytecode interpreter will crash if they are exceeded.  The length of the \texttt{instructions} array is not explicitly limited.
+
+\section{Limitations}
+One major limitation of the language design is the lack of any type of \texttt{return} statement or return value from a function.  This prevents the use of many types of useful recursion, and really limits the utility of the language.  See \S\ref{sec:lessons-return} for more details on this limitation.
