@@ -1,0 +1,8 @@
+
+/"IEND" end:uint2/ {
+	print(end);
+}
+
+/"IEND" end:int2/ {
+	print(end);
+}
