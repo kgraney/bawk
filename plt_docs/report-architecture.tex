@@ -1,3 +1,6 @@
+\section{Design decisions}
+The design decisions for this project were not made with considerations towards performance or scalability.  Design decisions were based around ease of implementation and demonstration of compiler concepts.
+
 \section{Execution phases}
 The bawk interpreter consists of a bytecode compiler and a bytecode runtime environment.  The two are seamlessly integrated into a single executable program, \texttt{bawk}.  By calling this program with a \texttt{-c} option the results of the bytecode compiler are output, and by calling it with no option (or an explicit \texttt{-e}) the the given program is compiled internally to bytecode and then immediately executed in the bytecode interpreter.
 

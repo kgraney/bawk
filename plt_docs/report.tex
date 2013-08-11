@@ -105,6 +105,8 @@ COMS W4115, Spring 2013, Professor Stephen Edwards
 \input{report-lrm.tex}
 
 \chapter{Project plan}
+\input{report-plan.tex}
+
 \chapter{Architectual design}
 \input{report-architecture.tex}
 
@@ -147,30 +149,8 @@ The \texttt{parser.mly} file contains Ocamlyacc specifications for the bawk pars
 \lstinputlisting[caption=utile.ml]{../utile.ml}
 
 \section{Test files}
-All test files are designed to be run on the input file \texttt{lichtenstein.png} unless specified otherwise.  The beginning of the \texttt{lichtenstein.png} file is shown below for convenience, and the file itself can be found packaged with the bawk source.
-
-\begin{verbatim}
-0000000: 8950 4e47 0d0a 1a0a 0000 000d 4948 4452  .PNG........IHDR
-0000010: 0000 0200 0000 0200 0802 0000 007b 1a43  .............{.C
-0000020: ad00 0000 0970 4859 7300 000a f000 000a  .....pHYs.......
-0000030: f001 42ac 3498 0000 0007 7449 4d45 07d7  ..B.4.....tIME..
-0000040: 0511 0921 0919 38af 7500 0020 0049 4441  ...!..8.u.. .IDA
-0000050: 5478 dab4 bd5b ac6d 5b76 1dd4 5aef 63ae  Tx...[.m[v..Z.c.
-0000060: bdcf bdb7 1ed7 a9b2 2b71 d995 38b1 63f2  ........+q..8.c.
-0000070: b021 4fe7 0181 8404 a280 1421 10e2 2522  .!O........!..%"
-0000080: 7ef8 46fc 874f 7ef9 e40f 81f8 43e1 2bca  ~.F..O~.....C.+.
-0000090: 4f82 2148 0ea0 5809 2838 ca8b d871 1c95  O.!H..X.(8...q..
-00000a0: 53b6 eb75 5fe7 ec35 476f 7cf4 3ec6 1c73  S..u_..5Go|.>..s
-00000b0: edb5 cfbd 65c8 aeab 5be7 eeb3 f75a 73cd  ....e...[....Zs.
-00000c0: 3946 1fbd b7d6 7aeb fcbd fff6 7f2b 7a17  9F....z......+z.
-00000d0: 4220 626b 6c06 2a48 9a39 e980 0114 0420  B bkl.*H.9..... 
-00000e0: 22f6 d09b c075 8fab 60f4 2638 f317 ed72  "....u..`.&8...r
-00000f0: d1e6 7cd8 daa5 b953 4e38 e194 2481 8289  ..|....SN8..$...
-...
-0059270: 3122 4a04 2150 a6c8 ff1f 00c1 c91a 2379  1"J.!P........#y
-0059280: 1a27 0000 0000 4945 4e44 ae42 6082       .'....IEND.B`.
-\end{verbatim}
-
+\label{sec:test-files}
+All test files are designed to be run on the input file \texttt{lichtenstein.png} unless specified otherwise.  
 \testfile{test-arith.bawk}
 \testfile{test-cond1.bawk}
 \testfile{test-func1.bawk}
