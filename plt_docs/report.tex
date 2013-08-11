@@ -4,6 +4,7 @@
 \usepackage{listings}
 \usepackage{caption}
 \usepackage[bookmarks=true]{hyperref}
+\usepackage{graphicx}
 
 \usepackage{syntax}
 \setlength{\grammarparsep}{20pt plus 1pt minus 1pt} % increase separation between rules
@@ -59,6 +60,7 @@ frameround=fttf,
 framexleftmargin=14pt,
 xleftmargin=14pt,
 xrightmargin=4pt,
+language=awk
 }
 
 \DeclareCaptionFont{white}{\color{white}}
@@ -71,7 +73,27 @@ xrightmargin=4pt,
 	\lstinputlisting[caption=Expected output (#1.out),language=awk]{../tests/#1.out}}
 
 \begin{document}
-\maketitle
+%\maketitle
+\begin{titlepage}
+\begin{center}
+~\\\vspace{1.75in}
+\Huge
+\textsc{bawk, a binary awk}
+
+\vspace{1in}
+\LARGE
+Kevin M.\ Graney\\
+\texttt{kmg2165@columbia.edu}
+
+\Large
+\vspace{1.75in}
+Programming Languages and Translators\\
+COMS W4115, Spring 2013, Professor Stephen Edwards
+
+\end{center}
+\vfill
+\includegraphics[width=4in]{columbia_university.eps}
+\end{titlepage}
 \tableofcontents
 \lstlistoflistings
 
@@ -84,8 +106,13 @@ xrightmargin=4pt,
 
 \chapter{Project plan}
 \chapter{Architectual design}
+\input{report-architecture.tex}
+
 \chapter{Test plan}
+\input{report-test.tex}
+
 \chapter{Lessons learned}
+\input{report-lessons.tex}
 
 
 \chapter{Source code listing}
@@ -145,6 +172,7 @@ All test files are designed to be run on the input file \texttt{lichtenstein.png
 \end{verbatim}
 
 \testfile{test-arith.bawk}
+\testfile{test-cond1.bawk}
 \testfile{test-func1.bawk}
 \testfile{test-func2.bawk}
 \testfile{test-func3.bawk}
@@ -154,6 +182,10 @@ All test files are designed to be run on the input file \texttt{lichtenstein.png
 \testfile{test-pat4.bawk}
 \testfile{test-pat5.bawk}
 \testfile{test-pat6.bawk}
+\testfile{test-pat7.bawk}
+\testfile{test-pat8.bawk}
+\testfile{test-pat9.bawk}
+\testfile{test-pat10.bawk}
 \testfile{test-scope1.bawk}
 \testfile{test-useful1.bawk}
 \testfile{test-var1.bawk}

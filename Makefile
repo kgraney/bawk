@@ -12,6 +12,8 @@ OBJS = utile.cmo \
 
 default: bawk plt_docs/lrm.pdf plt_docs/proposal.pdf design_docs
 
+plt_docs/report.pdf: $(wildcard plt_docs/report-*.tex)
+
 %.pdf: %.tex
 	cd $(shell dirname $@); pdflatex $(shell basename $<)
 	cd $(shell dirname $@); pdflatex $(shell basename $<)

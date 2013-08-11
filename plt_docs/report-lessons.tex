@@ -1,0 +1,9 @@
+This project provided a number of valuable software engineering and language design lessons.
+
+\section{Language design}
+The design of the language was critical to being successful with this project.  It was crucial to really think through the specifics of the language before even thinking about writing the compiler's translation logic.  It was critical to write the scanner and parser in parallel with hashing out the language details.  Writing these helped force the resolution of many shift/reduce ambiguities and couple reduce/reduce ambiguities in the original, pre-parser, design.
+
+One visible addition to the language that came about from writing the parser is the \texttt{def} keyword before function definitions.  This was added to resolve a conflict in the parser.  Similarly, when adding if statements I realized that parenthesis were required around the conditional expression when a parser conflict was resolved after adding them.
+
+\section{Scanner and parser generators}
+As described in \S\ref{sec:bytecode-compiler}, there is some ambiguity in the scanner distinguishing between hexadecimal values and identifier names.  I didn't realize this ambiguity in the initial language design until testing the compiler with a hexadecimal constant beginning with a letter.  This ambiguity was obviously not detected as a shift/reduce or reduce/reduce conflict by the parser generator because it was a collision of definitions in the scanner.  Luckily it was possible to change the language definition slightly and add some logic in the parser to resolve the ambiguity.
