@@ -5,6 +5,7 @@
 \usepackage{caption}
 \usepackage[bookmarks=true]{hyperref}
 \usepackage{graphicx}
+\usepackage{multicol}
 
 \usepackage{syntax}
 \setlength{\grammarparsep}{20pt plus 1pt minus 1pt} % increase separation between rules
@@ -76,6 +77,7 @@ language=awk
 %\maketitle
 \begin{titlepage}
 \begin{center}
+\includegraphics[width=4in]{columbia_university.eps}
 ~\\\vspace{1.75in}
 \Huge
 \textsc{bawk, a binary awk}
@@ -92,7 +94,6 @@ COMS W4115, Spring 2013, Professor Stephen Edwards
 
 \end{center}
 \vfill
-\includegraphics[width=4in]{columbia_university.eps}
 \end{titlepage}
 \tableofcontents
 \lstlistoflistings
@@ -101,6 +102,8 @@ COMS W4115, Spring 2013, Professor Stephen Edwards
 \input{report-introduction.tex}
 
 \chapter{Language tutorial}
+\input{report-tutorial.tex}
+
 \chapter{Language reference manual}
 \input{report-lrm.tex}
 
@@ -166,7 +169,9 @@ All test files are designed to be run on the input file \texttt{lichtenstein.png
 \testfile{test-pat8.bawk}
 \testfile{test-pat9.bawk}
 \testfile{test-pat10.bawk}
+\testfile{test-pat11.bawk}
 \testfile{test-scope1.bawk}
+\testfile{test-scope2.bawk}
 \testfile{test-useful1.bawk}
 \testfile{test-var1.bawk}
 

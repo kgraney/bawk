@@ -1,5 +1,5 @@
 \section{Design decisions}
-The design decisions for this project were not made with considerations towards performance or scalability.  Design decisions were based around ease of implementation and demonstration of compiler concepts.
+The design decisions for this project were not made with considerations towards performance or scalability.  Design decisions were based around ease of implementation and demonstration of compiler concepts.  For this reason some features of a practical language were excluded because they cost significant effort for minimal benefit to the experience of writing a compiler.
 
 \section{Execution phases}
 The bawk interpreter consists of a bytecode compiler and a bytecode runtime environment.  The two are seamlessly integrated into a single executable program, \texttt{bawk}.  By calling this program with a \texttt{-c} option the results of the bytecode compiler are output, and by calling it with no option (or an explicit \texttt{-e}) the the given program is compiled internally to bytecode and then immediately executed in the bytecode interpreter.
@@ -22,7 +22,7 @@ The parser converts the sequence of tokens into an abstract syntax tree (AST).  
 
 The \texttt{bawk} compiler can output the AST in a GraphViz format, which is useful for visualizing and debugging the AST.  The \texttt{-ast} flag to the compiler will output GraphViz code.  This can be turned into a PDF by piping it to GraphViz using the command
 \begin{center}\tt
-bawk .... | dot -Tpdf -o out-file.pdf\rm.
+bawk -ast [binary filename] < [source filename] | dot -Tpdf -o out-file.pdf\rm.
 \end{center}
 The logic to generate the GraphViz code is the majority of the \texttt{ast.ml} file.  Other functions in that file serve to provide a few helper functions used when parsing the AST.
 

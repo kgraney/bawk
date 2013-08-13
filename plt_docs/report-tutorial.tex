@@ -1,0 +1,195 @@
+
+The bawk language is based on pattern matching bytes and extracting values from binary format data files.
+
+\section{A sample program}
+The sample program shown in \S\ref{sec:sample-program} illustrates how to print the width and height of a given PNG image file using bawk.  This is a perfect example of an application of the bawk language: a simple binary format file for which the extraction of integer data is desired.  We will use this sample program in the next section to show how bawk is executed.
+
+\section{Executing bawk files}
+To execute a bawk file, call \texttt{bawk} with a \texttt{-e} flag and specify the file on which to operate.  The bawk code is then to be provided via standard input.
+\begin{center}\tt
+./bawk -e [binary filename] < [bawk filename]
+\end{center}
+This command will compile and run the bawk program over the given binary file.  The \texttt{-e} flag is optional and may be ommitted.  (The default operation is to execute the program if no flags are given.)
+
+To execute the sample program, named \texttt{tests/test-util1.bawk}, we run bawk on a sample file, \texttt{tests/lichtenstein.png}, and see that the height and width of this file are both $512$ pixels.
+\begin{quote}\begin{verbatim}
+$ ./bawk -e tests/lichtenstein.png < tests/test-useful1.bawk
+512
+512
+\end{verbatim}\end{quote}
+
+To see the bytecode instructions for a given program use instead the \texttt{-c} flag.  With this flag, the bytecode instructions will be printed to standard output.
+\begin{center}\tt
+./bawk -c < [bawk filename]
+\end{center}
+If we compile our sample program for PNG files, we can see the bytecode generated, which is shown below.
+\begin{quote}\begin{multicols}{2}\begin{verbatim}
+$ ./bawk -c < tests/test-useful1.bawk 
+        0: Ldp
+        1: Ldp
+        2: Beo 124
+        3: Lod 0
+        4: Bne 10
+        5: Rdb 1
+        6: Lit 137
+        7: Bin Sub
+        8: Bne 119
+        9: Bra 14
+       10: Rdb 1
+       11: Lit 137
+       12: Bin Sub
+       13: Bne 119
+       14: Rdb 1
+       15: Lit 80
+       16: Bin Sub
+       17: Bne 119
+       18: Rdb 1
+       19: Lit 78
+       20: Bin Sub
+       21: Bne 119
+       22: Rdb 1
+       23: Lit 71
+       24: Bin Sub
+       25: Bne 119
+       26: Lod 0
+       27: Bne 33
+       28: Rdb 1
+       29: Lit 13
+       30: Bin Sub
+       31: Bne 119
+       32: Bra 37
+       33: Rdb 1
+       34: Lit 13
+       35: Bin Sub
+       36: Bne 119
+       37: Lod 0
+       38: Bne 44
+       39: Rdb 1
+       40: Lit 10
+       41: Bin Sub
+       42: Bne 119
+       43: Bra 48
+       44: Rdb 1
+       45: Lit 10
+       46: Bin Sub
+       47: Bne 119
+       48: Lod 0
+       49: Bne 55
+       50: Rdb 1
+       51: Lit 26
+       52: Bin Sub
+       53: Bne 119
+       54: Bra 59
+       55: Rdb 1
+       56: Lit 26
+       57: Bin Sub
+       58: Bne 119
+       59: Lod 0
+       60: Bne 66
+       61: Rdb 1
+       62: Lit 10
+       63: Bin Sub
+       64: Bne 119
+       65: Bra 70
+       66: Rdb 1
+       67: Lit 10
+       68: Bin Sub
+       69: Bne 119
+       70: Ldp
+       71: Ldp
+       72: Beo 116
+       73: Rdb 4
+       74: Str 2
+       75: Rdb 1
+       76: Lit 73
+       77: Bin Sub
+       78: Bne 111
+       79: Rdb 1
+       80: Lit 72
+       81: Bin Sub
+       82: Bne 111
+       83: Rdb 1
+       84: Lit 68
+       85: Bin Sub
+       86: Bne 111
+       87: Rdb 1
+       88: Lit 82
+       89: Bin Sub
+       90: Bne 111
+       91: Ldp
+       92: Ldp
+       93: Beo 108
+       94: Rdb 4
+       95: Str 3
+       96: Rdb 4
+       97: Str 4
+       98: Lod 3
+       99: Jsr -1
+      100: Lod 4
+      101: Jsr -1
+      102: Bra 108
+      103: Skp
+      104: Beo 108
+      105: Rdb 1
+      106: Drp
+      107: Bra 92
+      108: Skp
+      109: Skp
+      110: Bra 116
+      111: Skp
+      112: Beo 116
+      113: Rdb 1
+      114: Drp
+      115: Bra 71
+      116: Skp
+      117: Skp
+      118: Bra 124
+      119: Skp
+      120: Beo 124
+      121: Rdb 1
+      122: Drp
+      123: Bra 1
+      124: Skp
+      125: Skp
+      126: Hlt
+\end{verbatim}\end{multicols}\end{quote}
+
+\section{Walking through the example}
+The first line of the sample program in \S\ref{sec:sample-program} matches the pattern \texttt{89 "PNG" 0d0a1a0a}, where the string \texttt{"PNG"} is translated into ASCII bytes \texttt{50 4e 47}.  Bawk will scan through the input file until finding this pattern.  On the first occurrence, the block statement following will be executed, and the nested patterns will attempt to match starting at the end of the match from the higher-level pattern.  When a block exits, the pattern matching returns to executing at the position where it last began searching.
+
+There is a special variable in bawk, \texttt{RP}, that can be used to retrieve or set the \emph{read pointer} over the binary file.  The value of \texttt{RP} represents the number of bytes from the beginning of the file.  If we modify the example program to show us \texttt{RP} at various execution points it should become clear how the variable behaves.
+\begin{lstlisting}[caption=Showing how RP works]
+print(RP);
+/89 "PNG" 0d 0a 1a 0a/ {
+	print(RP);
+	/length:uint4 "IHDR"/ {
+		print(RP);
+		/width:uint4 height:uint4/ {
+			print(RP);
+		}
+		print(RP);
+	}
+	print(RP);
+}
+print(RP);
+RP + 100;
+print(RP);
+/ffee/ { print(RP); }
+print(RP);
+\end{lstlisting}
+Running this code produces the following output on \texttt{lichtenstein.png}.
+\begin{quote}\begin{verbatim}
+0
+8
+16
+24
+16
+8
+0
+0
+15705
+0
+\end{verbatim}\end{quote}
+As you can see, the \texttt{RP} pointer resets at the end of each pattern matching block, and can also be manually advanced.  Pattern matching always searches forward from \texttt{RP}.
+
+In addition to pattern matching bawk supports dynamic variable scoping, functions, conditional statements, and mixed endianness.  See the language reference manual in Chapter \ref{chap:lrm} for details.

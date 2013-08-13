@@ -1,3 +1,5 @@
+\label{chap:lrm}
+
 \section{Lexical Conventions}
 A program consists of a single bawk language character file.  There are six classes of tokens: identifiers, keywords, constants, string literals, operators, and separators.  White space characters are ignored except as they separate tokens or when they appear in string literals.
 
@@ -86,11 +88,23 @@ An expression statement is an expression followed by a semicolon.  Expressions a
 A function declaration is a statement declaring a new function.  Function declarations consist of an identifer to serve as the function name, followed by an open parenthesis, an optional comma separated list of identifiers to serve as function parameter names, a closing parenthesis, and a statement to serve as the function body.
 
 \begin{grammar}
-<function-declaration> ::= <identifier> `(' <function-decl-params> `)' <statement> 
+<function-declaration> ::= `def' <identifier> `(' <function-decl-params> `)' <statement> 
 
 <function-decl-params> ::= $\epsilon$
 \alt <identifier>
 \alt <function-decl-params> `,' <identifier>
+\end{grammar}
+
+\subsection{If statement}
+If the expression provided to the if statement evalutes to a non-zero value then the subsequent statement is executed.  If the expression evaluates to a value of zero, then the statement is not executed.
+\begin{grammar}
+<if-statement> ::= `if' `(' <expression> `)' <statement> 
+\end{grammar}
+
+\subsection{If/else statement}
+If/else statements work like if statements, with an additional second statement.  If the expression evaluates to a non-zero value then the first statement is executed and the second is not.  If the expression evaluates to zero then the first statement is not executed and the second is executed.
+\begin{grammar}
+<if-statement> ::= `if' `(' <expression> `)' <statement> `else' <statement>
 \end{grammar}
 
 \section{Expressions}

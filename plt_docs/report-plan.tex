@@ -1,4 +1,4 @@
-The plan for this project was:
+The plan for this project was to execute the following basic steps.
 
 \begin{enumerate}
 \item \textsl{Determine objectives of the language} -- the language was designed to be useful for extracting data quickly from binary files.  It was modelled after an awk-style syntax, but was constrained to be simple enough to implement in a single semester.
@@ -6,7 +6,7 @@ The plan for this project was:
 \item \textsl{Design the language syntax} -- the language syntax was modelled after awk and the microc language, and the concept was tested in parallel with writing a parser for it.
 \begin{enumerate}
 	\item \textsl{Write the scanner/parser} -- This was critical to working through details of the language in parallel with designing it.
-	\item \textsl{Design the AST types} -- The AST types were designed to be as simple as possible, so that the translation to bytecode could be done easily.
+	\item \textsl{Design the AST types} -- The abstract syntax tree (AST) types were designed to be as simple as possible, so that the translation to bytecode could be done easily.
 \end{enumerate}
 
 \item \textsl{Write the logic to output the AST to GraphViz} -- This was done mostly to help debug the AST structure, but also to make sure the AST was easy enough to traverse before attempting the bytecode translation.  Translating the AST to GraphViz code enabled the creation of a visualization that could be generated for different inputs to make sure very early on that things like operator precedence were working correctly.
@@ -19,3 +19,5 @@ The plan for this project was:
 
 \item \textsl{Test} -- Finally, a conclusive round of testing would be done to ensure the language has no glarring bugs.  Inefficiency and minor non-fatal flaws would be tolerated.
 \end{enumerate}
+
+Development tools used included git and GitHub for version control, Make for generating both the \texttt{bawk} executable as well as class documents, and a few decent text editors.  GraphViz was used for visualizing the AST, and \LaTeX\ was used to generate all the documents.
