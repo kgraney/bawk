@@ -8,8 +8,14 @@ One visible addition to the language that came about from writing the parser is 
 \section{Scanner and parser generators}
 As described in \S\ref{sec:bytecode-compiler}, there is some ambiguity in the scanner distinguishing between hexadecimal values and identifier names.  I didn't realize this ambiguity in the initial language design until testing the compiler with a hexadecimal constant beginning with a letter.  This ambiguity was obviously not detected as a shift/reduce or reduce/reduce conflict by the parser generator because it was a collision of definitions in the scanner.  Luckily it was possible to change the language definition slightly and add some logic in the parser to resolve the ambiguity.
 
+\subsection{GraphViz output}
+The GraphViz output was very useful in the early stages of writing the scanner and parser, but as it became clear that the basic design was solid the utility of the visualization decreased.  Despite the decreasing returns on invested time, it wasn't a whole lot more difficult than implementing an ASCII format of AST output.
+
 \section{Compiler and bytecode design}
 
 \subsection{Return statement problem}
 \label{sec:lessons-return}
 Late in the project I realized that I did not implement any type of \texttt{return} statement in the langauge.  This was an oversight, but unfortunately the design of the bytecode did not make it easy to add at the last minute. The bytecode instruction \texttt{Rts} returns from a subroutine by popping the arguments to the function off the stack.  Unfortunately this instruction requires a hard-coded constant for the number of instructions to pop.  Without changing the bytecode and its interpreter to support reading this value from the stack it is difficult to return from an arbitrary point in the function.  It could likely still be accomplished without a bytecode interpreter change, but it would require some redesign of the \texttt{translate} function in \texttt{compile.ml} to pass around additional information, namely a \texttt{Label} number for the end of the function.  This change was just too large to risk making in the last week of the semester, so the language stands without a \texttt{return} statement.
+
+\subsection{Lack of full support for string types}
+One way to improve the bawk language would be to add support for strings inside of expressions.  This would facilitate adding support for functions such as \texttt{printf} and also the reading of a fixed-length or null-terminated string from a file.  Support from strings in this way was one of the initial conceptual ideas behind the language, but late in the semester it became apparent that the bytecode interpreter would have to be overhauled to support both integers and strings on the stack and in the globals array.

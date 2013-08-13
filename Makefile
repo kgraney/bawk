@@ -12,7 +12,10 @@ OBJS = utile.cmo \
 
 default: bawk plt_docs/lrm.pdf plt_docs/proposal.pdf design_docs
 
-plt_docs/report.pdf: $(wildcard plt_docs/report-*.tex)
+plt_docs/report.pdf: $(wildcard plt_docs/report-*.tex) plt_docs/gitlog.tex
+
+plt_docs/gitlog.tex:
+	git log > plt_docs/gitlog.tex
 
 %.pdf: %.tex
 	cd $(shell dirname $@); pdflatex $(shell basename $<)
@@ -38,6 +41,7 @@ clean:
 	rm -f design_docs/*.html design_docs/*.css
 	rm -f plt_docs/*.pdf plt_docs/*.toc plt_docs/*.aux plt_docs/*.log plt_docs/*.lol
 	rm -f $(DEP_FILENAME)
+	rm -f plt_docs/gitlog.tex
 
 design_docs: bawk
 	$(MAKE) -C ./design_docs
